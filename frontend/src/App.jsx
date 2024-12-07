@@ -21,22 +21,24 @@ function Emprestimo() {
 }
 
 function Simulacao() {
+  localStorage.clear()
   return <Navigate to="/simulacao" />
 }
 
 
 function App() {
   return (
-    <>
-      <h1> Simulacao de empréstimo </h1>
-
-      <div>
-        <input type="number" placeholder="Valor do Empréstimo"/>
-        <input type="number" placeholder="Duração do Empréstimo"/>
-        <input type="number" placeholder="Duração do Empréstimo"/>
-        <button> Simular </button>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login/>}
+        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/register" element={<RegisterAndLogout />} />
+        <Route path="/emprestimo" element={<Emprestimo/>}/>
+        <Route path="*" element={<NotFound />}></Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
