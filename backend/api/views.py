@@ -75,20 +75,31 @@ class emprestimo(generics.ListCreateAPIView):
 
     def get(self,request):
         
+        data = {
+                "CollectionId": "bankingsystem",
+                "Image": {}}
+        
+        client = boto3.client('rekognition',
+                        region_name = 'us-east-1',
+                    aws_access_key_id = aws_access_key_id,
+                    aws_secret_access_key=aws_secret_access_key,
+                    aws_session_token=aws_session_token
+                        )
+        
         #A pesquisa ja funciona so falta ser na web que se mete a foto
         image_path = r"C:\Users\afons\OneDrive\Imagens\images (2).jpg"
 
-        with open(image_path, encoding="utf8", errors='ignore') as image_file:
+        with open(image_path, 'rb') as image_file:
             image_bytes = image_file.read()
 
-        parametros = {"CollectionId":collection_name,"Image":image_bytes,"MaxFaces":5,"FaceMatchThreshold":90}
+        response = client.search_faces_by_image(
+        CollectionId=collection_name,
+        Image={'Bytes': image_bytes},
+        MaxFaces=5,
+        FaceMatchThreshold=90  
+    )
         
-        #"Image":{'Bytes': image_bytes},
-
-        stepfunctions = boto3.client('stepfunctions', region_name='us-east-1')
-        response = stepfunctions.start_execution(
-        stateMachineArn='arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-664xyq4uy',
-        input=parametros)
+        print(response)
 
         return HttpResponse(response["FaceMatches"][0]["Face"]["FaceId"])
 
