@@ -9,4 +9,5 @@ sqlparse
 python-dotenv
 boto3
 mysqlclient
+Pillow
 json

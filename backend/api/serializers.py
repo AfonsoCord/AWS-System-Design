@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
+from .models import emprestimo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,23 +12,12 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         user = User.objects.create_user(**validated_data)
         return user
-    
-class NoteSerializer(serializers.ModelSerializer):
-    class meta:
-        model = Note
-        fields = ["id","title","content","created_at","author"]
-        extra_kwargs = {"author":{"read_only":True}}
 
 
-
-class EmprestimoSerializer(serializers.ModelSerializer):
+class Simulador(serializers.ModelSerializer):
     class Meta:
         model= User
-        fields = ["id","valor","duracao","salario","profissao","person"]
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
+        fields = ["id","valor","duracao","salario","profissao","documentos","tipoemprestimo","tempo","person"]
     
 
 class LoginSerializer(serializers.Serializer):

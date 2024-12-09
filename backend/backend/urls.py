@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, FormSimulacao, api_login,emprestimo
+from api.views import CreateUserView, simulacao, api_login,emprestimo
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -10,4 +10,4 @@ urlpatterns = [
     path("emprestimo/",emprestimo.as_view(), name= "emprestimo"),
     path("",emprestimo.as_view(),name="default"),
     path('login/', api_login, name='login'),
-    path('simulacao/', FormSimulacao.as_view(), name="Simulacao")]
+    path('simulacao/', simulacao, name="Simulacao")]

@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics,status,permissions
-from .serializers import UserSerializer, NoteSerializer,EmprestimoSerializer,LoginSerializer
+from .serializers import UserSerializer, Simulador,LoginSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from .models import Note,emprestimo
+from .models import emprestimo
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 import boto3
@@ -14,10 +14,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, JsonResponse
 
 bucket_name = 'bankingsystem'
-aws_access_key_id="ASIAYS2NSE42E2PSEQIE"
-aws_secret_access_key="ClEz8ogw8m8hLAEI1uhhC8CVR4A5uTl1SuaGDaoy"
-aws_session_token="IQoJb3JpZ2luX2VjEGIaCXVzLXdlc3QtMiJHMEUCIHElurZ+aR7NhUH1uLT2sr0Z8WXRQ+zRFs5oQwalX5mBAiEA6EMJgjwHJ9jYUQLUTk706UEsMIvKNKuE9O6EIdFUBNwqtAIIGxAAGgw1OTAxODM4MDI2NzYiDKKT46zpBMu5ht3dzSqRAnG7JjUibJIxMu1vcGx5LYWn3Xrghcp+IQrpE+hUpDn0TpU6INZDrKOb5UOJ01d9GqVkYoTXXa6M+tG1qtX//acLfYkdcOpjzOw9S99riGbBRXopCzVmiubGCWi8Qq6ydwSRxIlHzO8OCbAGKB/Jr8oZ+2f91NiiH45s/xH4nR+U5ah7mGiLSm8gOgCzPBBPlcZla7OWbAPTQ55TbQGtl0xo54JpQPticb2XVUo0CK/MmhcCmWm7bM0FlnFl+mTHwajR8LFHySk0ZDhzBVVmUnXeOIiE0zZPMHpChMc9eUaT3p6fSLZEPYK94mjFFzmFAmM3j/hZ+JiCnMSlveT2ix6pmnHAYmO3n0WbyxEA9p2g0jCb3Me6BjqdAfyxYxy3Wdl6tk18xDLT2FAxNGHYQFwewdFRncB3I31fOvedyREwvSmEtAKLTT1MVWsT+aa6O0DLyouD7vSrxoPuXW8tURxBVJgRjGzeaW/xRm9G4dDrtnsKPUWTBUyiPmCBo78S+RDMS9p/cfVFUOvhidnm5XhhrSc4B/56HHSD34vkKaYzZ7j78u8bt9GWOlBmD9TAqFnhjCo+8IA="
 collection_name = 'faces' # ficou guardado no regnonition não no s3
+aws_access_key_id="ASIAYS2NSE42BTDTU3S7"
+aws_secret_access_key="4Mq6qBSLrmCrdRakrglSLcoAn0PmaRTC/kqRjEzP"
+aws_session_token="IQoJb3JpZ2luX2VjEL///////////wEaCXVzLXdlc3QtMiJGMEQCIEd4XYNZ4q8EDJ8eNr2OftzL3EgHDeydFzY26jXcFbCvAiB34gVpLpqSWOUIRJcZjnyG+UUO6S8N498LYQV1c/ibtCq0Agh4EAAaDDU5MDE4MzgwMjY3NiIMihV46rPA4Hm0fyHIKpECMHb4AzsQIlT8yCVVSx0ndT26y9rEyTq3GK6Zw9MBdzjhu/PBXkT9EBGmoJ1jiz8bsr3AaHMVzXYmoycWsQv+TeFs7gUa9NTkzp0fE6u98rmR3uk2RyGr/cB7PdFcSkhyPvw3hh0RyLoY32gDfYtPQrNeZfwijs/TKCiJrtc9pu4IyAK872jE/m158zynrwivoGmb/uitC7QAit4xXFuA4UxcyqD7JC+Hw1XlfrFUkCs92gJs9QzjhBGCxyuv2b0HRGKBKn20oirM1kXP58axjw2wzMPdSQGEf/6/dCK7oQO07bTsislSCPVpsX/5Hrjo1cF0JLsLfLf6vfnCoLc6RVw8cXubMFY/wuj2clVEzv/CMMGH3LoGOp4BtP1ViVQ0NNe3ijMqfVtCCCVShk/WmcLg4Y1p3d41jUA46lljjmugIDWp+RfQornfy+7zGemkPnUnh2XtALoTHXAwjr+Zp8WkwR2i27DTfoqZsyHqDPsxQbePKOOb9W/LmgU8s1pUpHDGvwQu0RwRCpobg2BNaKaajJ2dYWmChetd9X3hBXhICvSRu0OEedvGf77uKL3lf2dj06hZ23E="
+
+
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -41,32 +43,10 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     #Quem pode usar/ver isto vão ter de ser todos para poderem criar uma conta
     permission_classes = [AllowAny]
-
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
-    PermissionError = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
-    
-    def perform_create(self,serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
-
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
-    PermissionError = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
     
 class emprestimo(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
-    serializer_class = EmprestimoSerializer
+    serializer_class = Simulador
 
     def get_queryset(self):
         pass
@@ -99,8 +79,6 @@ class emprestimo(generics.ListCreateAPIView):
         FaceMatchThreshold=90  
     )
         
-        print(response)
-
         return HttpResponse(response["FaceMatches"][0]["Face"]["FaceId"])
 
 
@@ -113,11 +91,14 @@ class emprestimo(generics.ListCreateAPIView):
     
         return Response(json.loads(response["Payload"].read()),status=status.HTTP_200_OK)
     
+@api_view(["GET"])
+def simulacao(request):
+    sim = emprestimo.objects.all()
+    serializer = Simulador(sim,many=True)
 
-class FormSimulacao(generics.ListCreateAPIView):
+    return Response(serializer.data)
 
-    def get():
-        pass
+
 
 
 
