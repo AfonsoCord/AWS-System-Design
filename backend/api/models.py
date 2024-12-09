@@ -5,7 +5,7 @@ class emprestimo(models.Model):
     categories = (("CHAB","Crédito Habitacional"),
                   ("CAUT","Crédito Automotivo"),
                   ("CEST","Crédito Estudantil"),
-                  ("CPES"),"Crédito Pessoal")
+                  ("CPES","Crédito Pessoal"))
     valor = models.PositiveIntegerField()
     duracao = models.PositiveIntegerField()
     salario = models.PositiveIntegerField()
