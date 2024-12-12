@@ -2,54 +2,93 @@ import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
-import "../styles/Form.css"
+import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 
 function Form({ route, method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const name = method === "login" ? "Login" : "Register";
 
+    const handlePhotoChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setPhoto(e.target.files[0]);
+        }
+    };
+
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
 
+        const formData = new FormData();
+        if (method === "login") {
+            if (photo) {
+                formData.append("photo", photo);
+            } else {
+                alert("Please upload a photo.");
+                setLoading(false);
+                return;
+            }
+        } else {
+            formData.append("username", username);
+            formData.append("password", password);
+        }
+
         try {
-            const res = await api.post(route, { username, password })
+            const res = await api.post(route, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
             if (method === "login") {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/")
+                navigate("/");
             } else {
-                navigate("/login")
+                navigate("/login");
             }
         } catch (error) {
-            alert(error)
+            alert(error.response?.data?.message || "An error occurred.");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="form-container">
             <h1>{name}</h1>
-            <input
-                className="form-input"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
-            />
-            <input
-                className="form-input"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-            />
+            {method === "login" ? (
+                <>
+                    <input
+                        className="form-input"
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                    />
+                </>
+            ) : (
+                <>
+                    <input
+                        className="form-input"
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                    />
+                    <input
+                        className="form-input"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                    />
+                </>
+            )}
             {loading && <LoadingIndicator />}
             <button className="form-button" type="submit">
                 {name}
@@ -58,4 +97,4 @@ function Form({ route, method }) {
     );
 }
 
-export default Form
+export default Form;

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics,status,permissions
-from .serializers import UserSerializer, Simulador,LoginSerializer
+from .serializers import  Simulador,LoginSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import emprestimo
 from rest_framework.views import APIView
@@ -15,11 +15,10 @@ from django.http import HttpResponse, JsonResponse
 
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
-aws_access_key_id="ASIAYS2NSE42BTDTU3S7"
-aws_secret_access_key="4Mq6qBSLrmCrdRakrglSLcoAn0PmaRTC/kqRjEzP"
-aws_session_token="IQoJb3JpZ2luX2VjEL///////////wEaCXVzLXdlc3QtMiJGMEQCIEd4XYNZ4q8EDJ8eNr2OftzL3EgHDeydFzY26jXcFbCvAiB34gVpLpqSWOUIRJcZjnyG+UUO6S8N498LYQV1c/ibtCq0Agh4EAAaDDU5MDE4MzgwMjY3NiIMihV46rPA4Hm0fyHIKpECMHb4AzsQIlT8yCVVSx0ndT26y9rEyTq3GK6Zw9MBdzjhu/PBXkT9EBGmoJ1jiz8bsr3AaHMVzXYmoycWsQv+TeFs7gUa9NTkzp0fE6u98rmR3uk2RyGr/cB7PdFcSkhyPvw3hh0RyLoY32gDfYtPQrNeZfwijs/TKCiJrtc9pu4IyAK872jE/m158zynrwivoGmb/uitC7QAit4xXFuA4UxcyqD7JC+Hw1XlfrFUkCs92gJs9QzjhBGCxyuv2b0HRGKBKn20oirM1kXP58axjw2wzMPdSQGEf/6/dCK7oQO07bTsislSCPVpsX/5Hrjo1cF0JLsLfLf6vfnCoLc6RVw8cXubMFY/wuj2clVEzv/CMMGH3LoGOp4BtP1ViVQ0NNe3ijMqfVtCCCVShk/WmcLg4Y1p3d41jUA46lljjmugIDWp+RfQornfy+7zGemkPnUnh2XtALoTHXAwjr+Zp8WkwR2i27DTfoqZsyHqDPsxQbePKOOb9W/LmgU8s1pUpHDGvwQu0RwRCpobg2BNaKaajJ2dYWmChetd9X3hBXhICvSRu0OEedvGf77uKL3lf2dj06hZ23E="
 
-
+aws_access_key_id="ASIAYS2NSE42E33L7SXN"
+aws_secret_access_key="jdmPVjb2FP9lIEc/LHbZ8GwEWy8RQxwlgR4quRYn"
+aws_session_token="IQoJb3JpZ2luX2VjEAcaCXVzLXdlc3QtMiJHMEUCIQCUkYH3HCyHcial/1JsqnUHyGBFDwhpCz5Vv0snCSurJQIgKYMqRqnkOTUahrjI8VfEq2k2z2s5LQbV+1EzjqjCCC0qvQIIv///////////ARAAGgw1OTAxODM4MDI2NzYiDKeSRblquFsNJEeVVyqRAjt/m1VPCdkBZWpj8FigJfSGYgwpOnX4b1ljr+JUdc1H47iwBe9+p1fPHw4QQLuXqakVPcJ+V7jYKOTtBPWDxNk/UE/+g11rVnJbVB6PTi4jMTtaaYJ1cL1Vxlfl91LqzD0Chdx1LjQxgMRTxinUyckzrWf5CDbwDciGsV4imzWnxQBPg1h2PmZsNUPZ4RzwOhgZiMlBipv2HFTxgqh5pBJzMahKrn36OYhXAPNfrbHUxYodej4D62/ir2Akvmga2lZ7HeYibCYWAzHJW9iHuhIdFcRdvYhaOuFVI7os/CQJeAHvRedEwbtoNefZYKkFxjp2eGoln8VLnH8vRZGLDg06mA4SKQbLyY4QYAsrZDuv4jCb4uu6BjqdAf51WXqFO1PgNkxCYf4Cu3vVo1dTNz5He/2iGxEOjxea8aumR83ujBcAWvEakFy6pdx7Zo0/VjrNuz1Uf/7BqED5LEzKr/ccaK6Kvf2P3jeV2Y8yVvXQlaP6Qx2UiC0aVpXmV3Yf4u0RNKef2atSk11i4fa7RuQvk3WZtDYAvsPU72qR1RUrDmhyy3+I9aOn5WClo3iR+6RPLP5lTTg="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -37,12 +36,13 @@ s3 = boto3.resource('s3',
 my_bucket = s3.Bucket(bucket_name)
 
 class CreateUserView(generics.CreateAPIView):
+    pass
     #Para nao criar um user que ja existe
-    queryset = User.objects.all()
+    #queryset = User.objects.all()
     #O que vamos precisar para criar um novo utilizador
-    serializer_class = UserSerializer
+    #serializer_class = UserSerializer
     #Quem pode usar/ver isto vão ter de ser todos para poderem criar uma conta
-    permission_classes = [AllowAny]
+    #permission_classes = [AllowAny]
     
 class emprestimo(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
@@ -103,8 +103,7 @@ def simulacao(request):
 
 
 @api_view(['POST'])
-def api_login(request):
-    
+def api_login(request):    
     serializer = LoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     nome = serializer.validated_data['email']
