@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics,status,permissions
-from .serializers import  Simulador,LoginSerializer
+from .serializers import  Simulador,LoginSerializer, LoanSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import emprestimo
 from rest_framework.views import APIView
@@ -12,6 +12,10 @@ from rest_framework.response import Response
 import json
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, JsonResponse
+from rest_framework.decorators import permission_classes
+from django.shortcuts import redirect
+from django.urls import reverse
+
 
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
@@ -67,7 +71,7 @@ class emprestimo(generics.ListCreateAPIView):
                         )
         
         #A pesquisa ja funciona so falta ser na web que se mete a foto
-        image_path = r"C:\Users\afons\OneDrive\Imagens\images (2).jpg"
+        image_path = r"C:\Users\afons\OneDrive\Imagens\8643f1e8-8e42-41ab-a218-e413a9d56414.jpg"
 
         with open(image_path, 'rb') as image_file:
             image_bytes = image_file.read()
@@ -91,25 +95,42 @@ class emprestimo(generics.ListCreateAPIView):
     
         return Response(json.loads(response["Payload"].read()),status=status.HTTP_200_OK)
     
-@api_view(["GET"])
-def simulacao(request):
-    sim = emprestimo.objects.all()
-    serializer = Simulador(sim,many=True)
-
-    return Response(serializer.data)
-
-
-
-
 
 @api_view(['POST'])
-def api_login(request):    
+@permission_classes([AllowAny])
+def api_login(request): 
     serializer = LoginSerializer(data=request.data)
+
     serializer.is_valid(raise_exception=True)
-    nome = serializer.validated_data['email']
-    id_cara = serializer.validated_data['password']
     
-    user = emprestimo.objects.get(nome=nome, id_cara=id_cara)
+    data = {
+            "CollectionId": "bankingsystem",
+            "Image": {}}
+    
+    client = boto3.client('rekognition',
+                    region_name = 'us-east-1',
+                aws_access_key_id = aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key,
+                aws_session_token=aws_session_token
+                    )
+    
+    #A pesquisa ja funciona so falta ser na web que se mete a foto
+
+    try:
+        response = client.search_faces_by_image(
+    CollectionId=collection_name,
+    Image={'Bytes': request.FILES['photo'].read()},
+    MaxFaces=5,
+    FaceMatchThreshold=90)
+        id_cara = response["FaceMatches"][0]["Face"]["FaceId"]
+
+    except :
+        return redirect("/api_login")
+    
+    if id_cara == "":
+        return
+
+    user = emprestimo.objects.get(id_cara=id_cara)
     if user is not None:
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -122,3 +143,22 @@ def api_login(request):
     else:
         return Response({'message': 'Invalid email or password', 'valid': '0'}, status=401)
     
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def loan_simulator(request):
+    if request.method == 'POST':
+        serializer = LoanSerializer(data=request.data)
+
+        if serializer.is_valid():
+            Quantia = serializer.validated_data['Quantia']
+            Tempo = serializer.validated_data['Tempo']
+
+            simulacao = {
+                "Quantia": Quantia,
+                "Tempo": Tempo,
+            }
+
+            return Response(simulacao, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

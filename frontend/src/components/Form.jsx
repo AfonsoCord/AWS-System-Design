@@ -5,7 +5,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 
-function Form({ route, method }) {
+function Form({ method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [photo, setPhoto] = useState(null);
@@ -39,7 +39,7 @@ function Form({ route, method }) {
         }
 
         try {
-            const res = await api.post(route, formData, {
+            const res = await api.post('/api_login/', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -50,7 +50,7 @@ function Form({ route, method }) {
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
                 navigate("/");
             } else {
-                navigate("/login");
+                navigate("/api_login");
             }
         } catch (error) {
             alert(error.response?.data?.message || "An error occurred.");

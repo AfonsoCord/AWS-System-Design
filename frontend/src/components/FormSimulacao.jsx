@@ -4,17 +4,24 @@ import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { useNavigate } from "react-router-dom";
 
-
 function LoanForm({ route }) {
     const [Quantia, setQuantia] = useState("");
     const [Tempo, setTempo] = useState("");
     const [loading, setLoading] = useState(false);
-
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        setLoading(true);
         e.preventDefault();
+        setLoading(true);
+        setError("");  // Resetando o erro ao tentar submeter
+
+        // Validação para garantir que os campos não estão vazios
+        if (!Quantia || !Tempo || isNaN(Quantia) || isNaN(Tempo) || Quantia <= 0 || Tempo <= 0) {
+            setError("Por favor, preencha todos os campos corretamente.");
+            setLoading(false);
+            return;
+        }
 
         const loanData = {
             Quantia: parseFloat(Quantia),
@@ -22,12 +29,16 @@ function LoanForm({ route }) {
         };
 
         try {
-            const res = await api.post(route, loanData, {
+            // Enviar a requisição assíncrona
+            const response = await api.post("/loan_simulator/", loanData, {
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
-            alert("Loan submitted successfully!");
+
+            // Aqui você pode processar a resposta, por exemplo:
+            navigate("/login");  // Navega para a página de sucesso após a submissão.
+
         } catch (error) {
             alert(error.response?.data?.message || "An error occurred.");
         } finally {
@@ -54,9 +65,14 @@ function LoanForm({ route }) {
                 placeholder="Duração do empréstimo"
                 required
             />
+            {error && <p style={{ color: "red" }}>{error}</p>}
             {loading && <LoadingIndicator />}
-            <button className="form-button" type="submit" onClick={() => navigate("/login")}>
-                Simular
+            <button
+                className="form-button"
+                type="submit"
+                disabled={!Quantia || !Tempo || isNaN(Quantia) || isNaN(Tempo) || Quantia <= 0 || Tempo <= 0 || loading}
+            >
+                {loading ? "Processando..." : "Simular"}
             </button>
         </form>
     );
