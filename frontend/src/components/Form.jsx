@@ -39,7 +39,7 @@ function Form({ method }) {
         }
 
         try {
-            const res = await api.post('/api_login/', formData, {
+            const res = await api.post('/login/', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -50,11 +50,15 @@ function Form({ method }) {
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
                 navigate("/");
             } else {
-                navigate("/api_login");
+                navigate("/login");
             }
         } catch (error) {
-            alert(error.response?.data?.message || "An error occurred.");
-        } finally {
+            if (error.response?.status === 400) {
+                alert(error.response.data.message || "Login failed. Please try again.");
+                window.location.reload();
+            } else {
+                alert(error.response?.data?.message || "An error occurred.");
+        }} finally {
             setLoading(false);
         }
     };

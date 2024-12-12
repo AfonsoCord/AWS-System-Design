@@ -20,9 +20,9 @@ from django.urls import reverse
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42E33L7SXN"
-aws_secret_access_key="jdmPVjb2FP9lIEc/LHbZ8GwEWy8RQxwlgR4quRYn"
-aws_session_token="IQoJb3JpZ2luX2VjEAcaCXVzLXdlc3QtMiJHMEUCIQCUkYH3HCyHcial/1JsqnUHyGBFDwhpCz5Vv0snCSurJQIgKYMqRqnkOTUahrjI8VfEq2k2z2s5LQbV+1EzjqjCCC0qvQIIv///////////ARAAGgw1OTAxODM4MDI2NzYiDKeSRblquFsNJEeVVyqRAjt/m1VPCdkBZWpj8FigJfSGYgwpOnX4b1ljr+JUdc1H47iwBe9+p1fPHw4QQLuXqakVPcJ+V7jYKOTtBPWDxNk/UE/+g11rVnJbVB6PTi4jMTtaaYJ1cL1Vxlfl91LqzD0Chdx1LjQxgMRTxinUyckzrWf5CDbwDciGsV4imzWnxQBPg1h2PmZsNUPZ4RzwOhgZiMlBipv2HFTxgqh5pBJzMahKrn36OYhXAPNfrbHUxYodej4D62/ir2Akvmga2lZ7HeYibCYWAzHJW9iHuhIdFcRdvYhaOuFVI7os/CQJeAHvRedEwbtoNefZYKkFxjp2eGoln8VLnH8vRZGLDg06mA4SKQbLyY4QYAsrZDuv4jCb4uu6BjqdAf51WXqFO1PgNkxCYf4Cu3vVo1dTNz5He/2iGxEOjxea8aumR83ujBcAWvEakFy6pdx7Zo0/VjrNuz1Uf/7BqED5LEzKr/ccaK6Kvf2P3jeV2Y8yVvXQlaP6Qx2UiC0aVpXmV3Yf4u0RNKef2atSk11i4fa7RuQvk3WZtDYAvsPU72qR1RUrDmhyy3+I9aOn5WClo3iR+6RPLP5lTTg="
+aws_access_key_id="ASIAYS2NSE42DW6GKVPR"
+aws_secret_access_key="wUKRnQwvEZPGv3/GwabBCtHcq2AMcaJWZJIyEHU3"
+aws_session_token="IQoJb3JpZ2luX2VjEA0aCXVzLXdlc3QtMiJIMEYCIQCum42E8Pwx4tGI/Igclw3N+SoklmbjcXvpPTBPFzPJpAIhAPRJUdjo1w36VfISYqYKWCIR79PW2UfordATUjsa7AwgKr0CCMb//////////wEQABoMNTkwMTgzODAyNjc2IgwPqJl791YjRMusdlMqkQLzGqqUI3xK0N9Y0gvyd5J9yPyVcvu1N5MdQe1C5esq3vhAQBBmVFPvRdHO1Piq7RA8cuB7hxysbHGqUSv9V2VvhQM7OPMwgPYkyq9/JqOWhXzC3NcwnxoXDqQ7JlMyAf8D4PLBDMCZ4HWJLy3vXJvybu4YEfeA1/K334517IiHyfJ0ge8z4uEfjU5xNaeHuYHXBrYfTs5UQ/kuMptMiyKzdvfYbAcrQUke8kUfeRHeM24MbmC3uhvIi13EL5+dr7GiYwh+Tw0l1Km/YZe0v7EjXgvnUJOyTpkZ8aGcHkUs7YrqF2fkTKGXmVK3pko4tAqZcbNnkBIvsD8CUoeyo/JjPX3vM3kY1n/ySZAGZD21EkMwlZntugY6nAEZA4vu6B03vwuXRP1odceRDhdPMAkiy2e0FxlsagRRz7y8QUPUhXJ9U10v4d7yO4F5CJqmC0PrZJ3ukyFA4pYrwTtl6srWOZSiBTcwVdFVkGDlOHMUjxFhG+um3Ox76QbzsfRLRM/tGDnyKBsZsvBOAOd9aapeX9UnE5xYBWl8jqbGaeLy1LHZgEClwIYrx8Bq9FPCgbPPtLyJBKI="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -98,7 +98,7 @@ class emprestimo(generics.ListCreateAPIView):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def api_login(request): 
+def login(request): 
     serializer = LoginSerializer(data=request.data)
 
     serializer.is_valid(raise_exception=True)
@@ -118,17 +118,14 @@ def api_login(request):
 
     try:
         response = client.search_faces_by_image(
-    CollectionId=collection_name,
-    Image={'Bytes': request.FILES['photo'].read()},
-    MaxFaces=5,
-    FaceMatchThreshold=90)
+            CollectionId=collection_name,
+            Image={'Bytes': request.FILES['photo'].read()},
+            MaxFaces=5,
+            FaceMatchThreshold=90)
         id_cara = response["FaceMatches"][0]["Face"]["FaceId"]
 
-    except :
-        return redirect("/api_login")
-    
-    if id_cara == "":
-        return
+    except:
+        return Response({"message": "O reconhecimento facial falhou."}, status=status.HTTP_400_BAD_REQUEST)
 
     user = emprestimo.objects.get(id_cara=id_cara)
     if user is not None:
