@@ -4,6 +4,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import NotFound from "./pages/NotFound"
 import Simul from "./pages/simular"
+import Home from "./pages/Home"
 import ProtectedRoute from "./components/ProtectedRoute"
 
 function Logout() {
@@ -21,7 +22,6 @@ function Emprestimo() {
 }
 
 function Simulacao() {
-  localStorage.clear()
   return <Simul />
 }
 
@@ -31,11 +31,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Simulacao/>}/>
-        <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/simulacao" element={<Simulacao />} />
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/logout" element={<Logout/>}/>
+        <Route path="/simulacao" element={<Simulacao/>}/>
         <Route path="/emprestimo" element={<Emprestimo/>}/>
-        <Route path="*" element={<NotFound />}></Route>
+        <Route path="*" element={<NotFound/>}></Route>
+        <Route path="/Home" element= {<ProtectedRoute><Home/></ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
   )

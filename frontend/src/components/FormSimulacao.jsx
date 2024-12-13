@@ -3,6 +3,7 @@ import api from "../api";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { useNavigate } from "react-router-dom";
+import { ACCESS_TOKEN, REFRESH_TOKEN} from "../constants";
 
 function LoanForm({ route }) {
     const [Quantia, setQuantia] = useState("");
@@ -15,6 +16,10 @@ function LoanForm({ route }) {
         e.preventDefault();
         setLoading(true);
         setError("");  // Resetando o erro ao tentar submeter
+
+        if (localStorage.getItem(ACCESS_TOKEN)) {
+            return navigate("/Home");  // Navega para Home se já estiver autenticado
+        }
 
         // Validação para garantir que os campos não estão vazios
         if (!Quantia || !Tempo || isNaN(Quantia) || isNaN(Tempo) || Quantia <= 0 || Tempo <= 0) {
@@ -36,8 +41,7 @@ function LoanForm({ route }) {
                 },
             });
 
-            // Aqui você pode processar a resposta, por exemplo:
-            navigate("/login");  // Navega para a página de sucesso após a submissão.
+            navigate("/login");  // Navega para login
 
         } catch (error) {
             alert(error.response?.data?.message || "An error occurred.");

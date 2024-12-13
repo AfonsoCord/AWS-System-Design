@@ -20,9 +20,9 @@ from django.urls import reverse
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42DW6GKVPR"
-aws_secret_access_key="wUKRnQwvEZPGv3/GwabBCtHcq2AMcaJWZJIyEHU3"
-aws_session_token="IQoJb3JpZ2luX2VjEA0aCXVzLXdlc3QtMiJIMEYCIQCum42E8Pwx4tGI/Igclw3N+SoklmbjcXvpPTBPFzPJpAIhAPRJUdjo1w36VfISYqYKWCIR79PW2UfordATUjsa7AwgKr0CCMb//////////wEQABoMNTkwMTgzODAyNjc2IgwPqJl791YjRMusdlMqkQLzGqqUI3xK0N9Y0gvyd5J9yPyVcvu1N5MdQe1C5esq3vhAQBBmVFPvRdHO1Piq7RA8cuB7hxysbHGqUSv9V2VvhQM7OPMwgPYkyq9/JqOWhXzC3NcwnxoXDqQ7JlMyAf8D4PLBDMCZ4HWJLy3vXJvybu4YEfeA1/K334517IiHyfJ0ge8z4uEfjU5xNaeHuYHXBrYfTs5UQ/kuMptMiyKzdvfYbAcrQUke8kUfeRHeM24MbmC3uhvIi13EL5+dr7GiYwh+Tw0l1Km/YZe0v7EjXgvnUJOyTpkZ8aGcHkUs7YrqF2fkTKGXmVK3pko4tAqZcbNnkBIvsD8CUoeyo/JjPX3vM3kY1n/ySZAGZD21EkMwlZntugY6nAEZA4vu6B03vwuXRP1odceRDhdPMAkiy2e0FxlsagRRz7y8QUPUhXJ9U10v4d7yO4F5CJqmC0PrZJ3ukyFA4pYrwTtl6srWOZSiBTcwVdFVkGDlOHMUjxFhG+um3Ox76QbzsfRLRM/tGDnyKBsZsvBOAOd9aapeX9UnE5xYBWl8jqbGaeLy1LHZgEClwIYrx8Bq9FPCgbPPtLyJBKI="
+aws_access_key_id="ASIAYS2NSE42CLDNQAGW"
+aws_secret_access_key="MtKPXdRQRLrK5lGYDOUtf084FAfF+/zOjwxMTJ8V"
+aws_session_token="IQoJb3JpZ2luX2VjEBsaCXVzLXdlc3QtMiJHMEUCICJVGaOx+qVYrEn7JFWnQ8jvTZnWhdNzw9Si6spYVdblAiEAy0Kk4QBD28Vopeb+LGXU56mHcLfyVwm76miBB8IhlmMqvQII1P//////////ARAAGgw1OTAxODM4MDI2NzYiDIaXvc3cPQUJRW71zCqRAuPzFiq6/4AtkxJhmmim4bvJgK0VKMAK1oGWZzyCzbqW2FkCzjCuCnU1SSnDilrpt5zE+RaijUfRx5UiB0nu3UKAy3BwB+xrrVDNYB0EU/X4UMAWk1Y8Ntlstf195pYH2w2mtGkKVzilyJHM2ol1lf2NXs6u3mXHlbG/JIXar21PW5n79TOv5jpDJAscGhj/mXvntBnRs2uXBpFMKYeo7/zbFUIjk2Y5AtFoVNr6og6L584nLEbZmuDvA4+hCrqtndkuNtspBgkFoC8YIHjSVvPpokOsKEgzvYC3wEyxHmqH42WT8GusmtItsJkdXhWuS6//VNAsQ2hSpwqNFjmCHkoYRYtS/6M2SAIl7loh+tGpwTCervC6BjqdAeclqTuHXvwOSrZT8X9DpgBRmbzKxcnvtWdorQPeYJR95lj9K+Sfkvfrw4Iv72JOVThIcA1P+27KpOmvVzPexMgGSl/6baMoULBJzApsf3xhyJ8VYoQmk6vfKLRytuey8HqfAMTeZYzQurYg7yAlyqx50oZxFZBfbgickaZnKwe5INgJQ6bOntUMcPvkEYr+IOk4u8IC8plud76kWKk="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -109,9 +109,16 @@ def login(request):
     
     client = boto3.client('rekognition',
                     region_name = 'us-east-1',
-                aws_access_key_id = aws_access_key_id,
-                aws_secret_access_key=aws_secret_access_key,
-                aws_session_token=aws_session_token
+                    aws_access_key_id = aws_access_key_id,
+                    aws_secret_access_key=aws_secret_access_key,
+                    aws_session_token=aws_session_token
+                    )
+
+    dynamodb = boto3.client('dynamodb',
+                    region_name = 'us-east-1',
+                    aws_access_key_id = aws_access_key_id,
+                    aws_secret_access_key=aws_secret_access_key,
+                    aws_session_token=aws_session_token
                     )
     
     #A pesquisa ja funciona so falta ser na web que se mete a foto
@@ -122,19 +129,30 @@ def login(request):
             Image={'Bytes': request.FILES['photo'].read()},
             MaxFaces=5,
             FaceMatchThreshold=90)
+        
         id_cara = response["FaceMatches"][0]["Face"]["FaceId"]
 
     except:
         return Response({"message": "O reconhecimento facial falhou."}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = emprestimo.objects.get(id_cara=id_cara)
+    #user = emprestimo.objects.get(id_cara=id_cara)
+    user = dynamodb.query(TableName="utilizadores", KeyConditionExpression="faceid = :id", ExpressionAttributeValues={':id':{'S':id_cara}})
+
     if user is not None:
-        refresh = RefreshToken.for_user(user)
+        refresh = RefreshToken()
+        refresh["user_id"] = user['Items'][0]['faceid']['S']
+        refresh["type"] = "refresh"
+
+        access = refresh.access_token
+        access["user_id"] = user['Items'][0]['faceid']['S']
+
+        print(1)
+
         return Response({
             'message': 'Login successful',
-            'access_token': str(refresh.access_token),
+            'access_token': str(access),
             'refresh_token': str(refresh),
-            'id': user.id,
+            'username': user['Items'][0]['username']['S'],
             'valid': '1'
         })
     else:
@@ -159,3 +177,7 @@ def loan_simulator(request):
             return Response(simulacao, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['POST'])
+def home(request):
+    return Response(home, status=status.HTTP_200_OK)
