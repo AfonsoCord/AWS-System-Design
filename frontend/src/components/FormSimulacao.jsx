@@ -3,7 +3,7 @@ import api from "../api";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN} from "../constants";
+import { ACCESS_TOKEN } from "../constants";
 
 function LoanForm({ route }) {
     const [Quantia, setQuantia] = useState("");

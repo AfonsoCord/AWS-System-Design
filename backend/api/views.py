@@ -20,9 +20,9 @@ from django.urls import reverse
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42BZTTMACZ"
-aws_secret_access_key="hWlXNWLMzymZLL3sROUEndUAFI9idUPDLsErUZtm"
-aws_session_token="IQoJb3JpZ2luX2VjEIn//////////wEaCXVzLXdlc3QtMiJGMEQCIB3LgTgFD9XFFPL7/VINBHQNrTO0IAks3jyB3zlkFiGGAiBC0MnD3lskzfUqzR/OYyinhiSHV5aaEc+fN/stkoh2SCq0AghSEAAaDDU5MDE4MzgwMjY3NiIMKzQrCjmzYL5A9TN0KpECdcXyN26IlexK7DnWVsPwlkt89RbXhpcwFP/5KANHa4riBqExvs95/W/IX5MTlyMtSdxMKi3ZDvOpuvmwLCQaLOXsxw/YRsUp6YWUwVmKDZpWkzLJsZfM1k7YaZsiAr+IUkMStm6yFy/AdvrnDMeeXQJC5U6vSwkfBri28RvTxBWnLxHM5E4EJsTIoivNhxiZdCp+cFYPXSjCeT2Yyx+giBa5e9ovdTsdUeecZy+osMJakyfnSiapnpLJ73Z52FvqVn21F4X+QvdH9mQ6xz59MF8Rf+zVEPTJIKe5UjlY6/sNRh9XQurtOMORGmBuYs19GRc+NADs3qC8/pfoahNWO7uXW6J46zAT1nyQGZlMQqJ+MI2xiLsGOp4Bm8xpiFI/aSvACPbL9Sgnj55N4OFlTQMf/4eU0ezjqRqdkwQllyNPum896Sca3Yi1BHjD+1WqVJ/zOD0VFl7ZYGVJQTiO7d07qvrBpi8IjLX8aPDQh2obK5KnQ82q6FfM1L6unYeLHaBkh5Nle+1YJoVnZYotJm+dbSkiuYQ5UtSuEpKg7DNh9vOlPzYs1T1ZCDq1Z0bJruipDjS2xhk="
+aws_access_key_id="ASIAYS2NSE42BYK4P5NV"
+aws_secret_access_key="Z6zTBAxXXUxBecLLi2MPuagUQEof7OdvuaI4OQzX"
+aws_session_token="IQoJb3JpZ2luX2VjEJX//////////wEaCXVzLXdlc3QtMiJHMEUCIQDbpTyTY2OprrpNvc8ybf3wIjE4oY7CnHD7Tz2yCzTTTQIgQoxZFzJQHFlPGlnbPJFpjKypZm27IRj/6gIeOdOPE10qtAIIXhAAGgw1OTAxODM4MDI2NzYiDAz/uWWfaxf4nZpeuyqRAnH4uxmgbdZB/KzYNXjinDC6ZVHZuABZBZM11x2pVWFzS8Z5gKv03I8ZBZLGl1udNuMRsVhwtfAnVyv3Cot3C/cawlwp9od59SAW7vxynEpHomW5jUWw9DFQb/7gGfbhCv3IBFu5wla0+NVD+d2Q/Q773ApT06EXoAQ6sTilqdB5NQR0EGDdEisneQOA7hrvLzs1eS34iTYDmJLFbDaPlItrlsOVWeJqZ8y8vhwhcq9MhTTILwNdK1q1TAFnFGtVRm+zhTmXECjNHt+80pAS4dXDi7OTO5uAloOwB9r1E3uKXCG0C4vsglln+0wjk7+hpbhAInifDn31Lw3M4XQnOmj5YxRrCjzg9rTng3Kn6MnYNDDvgYu7BjqdAd7xUHxV8J0s2xiNVvUz50dxpv1Ijj5rI8UaCdTT2pEHmgcnIVFGLQ6+DVjdoF9N2u5gdevoLMZOnDlBDHqtjYuXdqF9c6delRFguEzUZIbeoq86gKM8zbQXM+HXrO2VXZ5n2zEh9sVI0irOP4LG5M6EGEvylyECxYSjnx/kiTfyi72ylmoSw5ZrFbEQSS7EKROUlWMv+aFmXNCUvME="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -89,8 +89,6 @@ def login(request):
 
         access = refresh.access_token
         access["user_id"] = user['Items'][0]['faceid']['S']
-
-        print(1)
 
         return Response({
             'message': 'Login successful',
