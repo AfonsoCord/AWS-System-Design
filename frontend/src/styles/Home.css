@@ -66,3 +66,19 @@ div {
   form input[type="submit"]:hover {
     background-color: #0056b3;
   }
+
+  .logout {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .logout:hover {
+    background-color: #0056b3;
+    transition: background-color 0.3s;
+  }

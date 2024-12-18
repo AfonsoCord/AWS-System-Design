@@ -1,16 +1,25 @@
 /*import { useState, useEffect } from "react";
 import api from "./api";
-import Note from "./components/Note"
-import ".src/styles/Home.css"*/
+import Note from "./components/Note"*/
+import "../styles/Home.css"
 import {USERNAME} from "../constants";
 import Loan from "../components/Empréstimo";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
 
+    const navigate = useNavigate();
+
+    const handleLogout = () => { //botão de logout
+        localStorage.clear();
+        navigate("/login");
+    };
+
     return <div>
-        <h1>Bem vindo, {localStorage.getItem(USERNAME)}</h1>
-        <Loan route="/Home/" method="Home" />
-    </div>
+            <h1>Bem vindo, {localStorage.getItem(USERNAME)}</h1>
+            <button className="logout" onClick={handleLogout}>Logout</button>
+            <Loan route="/Home/" method="Home" />
+           </div>
 
 }
 

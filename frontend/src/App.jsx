@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import NotFound from "./pages/NotFound"
-import Simul from "./pages/simular"
+import Simulator from "./pages/Simulator"
 import Home from "./pages/Home"
 import ProtectedRoute from "./components/ProtectedRoute"
 
@@ -21,19 +21,15 @@ function Emprestimo() {
   return <Navigate to="/emprestimo" />
 }
 
-function Simulacao() {
-  return <Simul />
-}
-
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Simulacao/>}/>
+        <Route path="/" element={<Simulator/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/logout" element={<Logout/>}/>
-        <Route path="/simulacao" element={<Simulacao/>}/>
+        <Route path="/simulator" element={<Simulator/>}/>
         <Route path="/emprestimo" element={<Emprestimo/>}/>
         <Route path="*" element={<NotFound/>}></Route>
         <Route path="/Home" element= {<ProtectedRoute><Home/></ProtectedRoute>}/>
