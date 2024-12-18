@@ -20,9 +20,9 @@ from django.urls import reverse
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42B2J6RZWO"
-aws_secret_access_key="Al0YZUW3j+amHdsLTW/KdjH15wL+8oq/N4+6nFca"
-aws_session_token="IQoJb3JpZ2luX2VjEJf//////////wEaCXVzLXdlc3QtMiJGMEQCIGqmTrdfkFcj20IJ8MfJ0awP+yjlwPc8DdEywJnsoGk0AiA062vSSv36y0qsnHl0DtYB0JjGIXTclwrYr1gwl1SXKCq0AghgEAAaDDU5MDE4MzgwMjY3NiIMDx+KqItfOZG+YECQKpECtf40ogWN/XioNiaeYYPUx3Uk1i0VP3/i0v8H4pdSpLhuq+sca6qLqmTNWzMgl+dgq16dIP1Zwdbooy6oAj91wOGiX/pyOzQb0oht27y7j/98Ljv8qpuC6NAdslRkp+o8UVpSCHAquS096fE4WmZopay+sgCw3y08SxmpqX054KPNMcmOKJA96mgFHM15OHN/jFxDp7IpvdrG33M61No9VM93C6DlaAETx9pYwqptNpzyQyC8Ln8dsElVg7UshLZuo6mUUtG5tyhdqPOaQ5Fi8gCqeeYqkI5RVtH+CmJpFh0geYeU7YJ5hcnAlFLDv8Foq71Ky0d2av9mx9wurzuPqD8O3rHkg+UZ6odYHKB5y2tjMMPFi7sGOp4Bc60VM0Pxj8c3lfvVjc3zFyCYE8c+2Ez4nzSUUB5yU5Ojw+fRO9bEItyNrEkYGbcXAyBmAwuk5O+mm2J5pXv/LvViccrBylrrnCe9gD7IprTREAOtl+sBEqCLvZfrDPNqimspqvOcIrayRucfJAur3BaUpHPavsfHMdSTTje4/42y7Ol/YmLikU7S4qxsfI1qvNuc5dPXB7tm8mGUhKc="
+aws_access_key_id="ASIAYS2NSE42PUOMS5XN"
+aws_secret_access_key="jV27+dtl4Hcn2AxA3bg0f1l8LDY6ahTnUv90vEyC"
+aws_session_token="IQoJb3JpZ2luX2VjEJv//////////wEaCXVzLXdlc3QtMiJHMEUCIBHRfyCWE5vQnlvkL/jMI0jawn0fDmQnQSGN11z5XpwBAiEAs0RweMT8VCj3jpOOaZ8hoOACsyO4X2jRONicwmxlmLYqtAIIZBAAGgw1OTAxODM4MDI2NzYiDFOG74ctOpqUIfwkUyqRAoMU+ej4j1TPvWJhQb2n4yXlNvQBnZHytvP2kEJu6YWHyhYUDGpoJv9blx3SRmFNef0TatbqDzFJHU1Rww+z9G/xWaVbN+8boGnpY0/peLChMqmlq6UcDSZeaj7MQS21ksoQfJ8CWJdMR3CnT5U0bhnBPYAZqvVgXB705hncdB39G+TuBIZfny5reuJ0BWaHKpNM+PlFKZKjHZA3/8JhWKuab39eDTmC52EZeuiitxAzPqYTmRc9f9B5ILsq0UWOdPmSCTqQZbOo3u8YZZcEa7kM8dWpsNYpoBEcMyKc5+58NUn7koMrNy6H4Q4CxNB/OmxfpkFqqINUUHSeD4sNZhCwg8zebmNU1hc55oqCngAfZDDOqoy7BjqdAZTnYz6nd50khsakDZktEu59QWOgqjmKrue8adQwWMdy6Vg3r4AZH+MXQKHsaFtKPyqfbwpwTwoYgyFDfHYlmwiEKIZrnDUD49VPMgA+e6uvaBx8/0fO0F0h7MXK6iwicPmAc1k+r1JYymdYOAnHSQCmFtn+6edQIQSKpce1p6wv8h8SWjCyYSJP88svuk9LhkycChUP0i4LYkJR8k8="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -123,3 +123,31 @@ def loan_simulator(request):
 @api_view(['POST'])
 def home(request):
     return Response(home, status=status.HTTP_200_OK)
+
+
+
+
+
+@api_view(['POST'])
+def BankLogin(request):
+    #user = emprestimo.objects.get(id_cara=id_cara)
+    user = dynamodb.query(TableName="funcionario", KeyConditionExpression="faceid = :id", ExpressionAttributeValues={':id':{'S':id_cara}})
+
+    if user is not None:
+        refresh = RefreshToken()
+        refresh["user_id"] = user['Items'][0]['faceid']['S']
+        refresh["type"] = "refresh"
+
+        access = refresh.access_token
+        access["user_id"] = user['Items'][0]['faceid']['S']
+
+        return Response({
+            'message': 'Login successful',
+            'access_token': str(access),
+            'refresh_token': str(refresh),
+            'username': user['Items'][0]['username']['S'],
+            'valid': '1'
+        })
+    else:
+        return Response({'message': 'Invalid email or password', 'valid': '0'}, status=401)
+   

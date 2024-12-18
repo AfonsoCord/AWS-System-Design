@@ -5,6 +5,7 @@ import Register from "./pages/Register"
 import NotFound from "./pages/NotFound"
 import Simulator from "./pages/Simulator"
 import Home from "./pages/Home"
+import BankLogin from "./pages/BankLogin"
 import ProtectedRoute from "./components/ProtectedRoute"
 
 function Logout() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/logout" element={<Logout/>}/>
         <Route path="/simulator" element={<Simulator/>}/>
         <Route path="/emprestimo" element={<Emprestimo/>}/>
+        <Route path="/BankLogin" element={<BankLogin/>}/>
         <Route path="*" element={<NotFound/>}></Route>
         <Route path="/Home" element= {<ProtectedRoute><Home/></ProtectedRoute>}/>
       </Routes>
