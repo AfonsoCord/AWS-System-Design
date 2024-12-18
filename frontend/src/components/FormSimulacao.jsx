@@ -30,7 +30,7 @@ function LoanForm({ route }) {
 
         const loanData = {
             Quantia: parseFloat(Quantia),
-            Tempo: parseInt(Tempo, 10),
+            Tempo: parseInt(Tempo),
         };
 
         try {
