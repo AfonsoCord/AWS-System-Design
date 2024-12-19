@@ -10,4 +10,4 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('loan_simulator/', loan_simulator, name="Simulacao"),
     path('Home/', home, name='Home'),
-    path('BankLogin/',BankLogin, name='HomeBank')]
+    path('BankLogin/', BankLogin, name='BankLogin')]

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics,status,permissions
-from .serializers import  Simulador,LoginSerializer, LoanSerializer
+from .serializers import  Simulador,LoginSerializer, LoanSerializer, BankLoginSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import emprestimo
 from rest_framework.views import APIView
@@ -13,16 +13,14 @@ import json
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import permission_classes
-from django.shortcuts import redirect
-from django.urls import reverse
 
 
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42PUOMS5XN"
-aws_secret_access_key="jV27+dtl4Hcn2AxA3bg0f1l8LDY6ahTnUv90vEyC"
-aws_session_token="IQoJb3JpZ2luX2VjEJv//////////wEaCXVzLXdlc3QtMiJHMEUCIBHRfyCWE5vQnlvkL/jMI0jawn0fDmQnQSGN11z5XpwBAiEAs0RweMT8VCj3jpOOaZ8hoOACsyO4X2jRONicwmxlmLYqtAIIZBAAGgw1OTAxODM4MDI2NzYiDFOG74ctOpqUIfwkUyqRAoMU+ej4j1TPvWJhQb2n4yXlNvQBnZHytvP2kEJu6YWHyhYUDGpoJv9blx3SRmFNef0TatbqDzFJHU1Rww+z9G/xWaVbN+8boGnpY0/peLChMqmlq6UcDSZeaj7MQS21ksoQfJ8CWJdMR3CnT5U0bhnBPYAZqvVgXB705hncdB39G+TuBIZfny5reuJ0BWaHKpNM+PlFKZKjHZA3/8JhWKuab39eDTmC52EZeuiitxAzPqYTmRc9f9B5ILsq0UWOdPmSCTqQZbOo3u8YZZcEa7kM8dWpsNYpoBEcMyKc5+58NUn7koMrNy6H4Q4CxNB/OmxfpkFqqINUUHSeD4sNZhCwg8zebmNU1hc55oqCngAfZDDOqoy7BjqdAZTnYz6nd50khsakDZktEu59QWOgqjmKrue8adQwWMdy6Vg3r4AZH+MXQKHsaFtKPyqfbwpwTwoYgyFDfHYlmwiEKIZrnDUD49VPMgA+e6uvaBx8/0fO0F0h7MXK6iwicPmAc1k+r1JYymdYOAnHSQCmFtn+6edQIQSKpce1p6wv8h8SWjCyYSJP88svuk9LhkycChUP0i4LYkJR8k8="
+aws_access_key_id="ASIAYS2NSE42CC3PZ2QF"
+aws_secret_access_key="2aoODLhdcb4fJvdXRSYav9DaioJTajy3pJvX2aAf"
+aws_session_token="IQoJb3JpZ2luX2VjELb//////////wEaCXVzLXdlc3QtMiJIMEYCIQDg+z/qT8HYlKH7TVgVLMVxWLmXik8DrKqobxpC203yXQIhAIIweSdZGf+MB3B0+UecFmA5KQ8vGChyxG/WMvib/h2/KrQCCH8QABoMNTkwMTgzODAyNjc2IgzsvC36iHF1x3bLL+AqkQIaN7va2UAT/Oa9y9kT+h9KTUulADTL4+LQmt2IdHC2VxF+GpkGhblWrv0qWpNplzjax2fj91PzdcGeL2hWMm7vwoVMyrhQNmcj71Fw8OyhvTVCLQ7il6FLexcK6Qs9cYE9AhgxFZibQ5ZCB2dpFJxdNfeRzxKcEu9gtOmld765AbWsRmeOOGXES9a2lxxxRh+dxUJFRPMGtxOY3pR8HxblvKmC85dSxuNQypqNSKUamKQ/WJFstCyH0FFZKpAbFrvB6dC4YRG/fEKhxfowLHGccruBolOEgpeguC+XtKhvR7BmJle6lOTDQeZ6Us9gPnCRDSTzXcXhVnAl80PKu2lXifs09fYniuWXlmO6KiOf/44wjKGSuwY6nAE+mKoXZS9gASYZ+3uVwVfaiIMj1JHhtHRXMU0TJ/SUuZtqIRUA1PBwxcEGIDnTIk1LuMpXGqKU33RokMtozuUQLyIMWINDev7HGdVvD+iXSszdKTcQjeU4/PtVYXWV47O5OxZUrY+FShvBD4Z8NnzxIKNADNLVmEiixDeSp5RG2T37UZYZcxAoIQ7gramKFaHTZHmSwxbWZsh20ww="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -129,17 +127,30 @@ def home(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def BankLogin(request):
-    #user = emprestimo.objects.get(id_cara=id_cara)
-    user = dynamodb.query(TableName="funcionario", KeyConditionExpression="faceid = :id", ExpressionAttributeValues={':id':{'S':id_cara}})
 
+    serializer = BankLoginSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    username = request.data['username']
+    password = request.data['password']
+
+    user = dynamodb.query(TableName="funcionarios",
+                          KeyConditionExpression="username = :username",
+                          FilterExpression='password = :password',
+                          ExpressionAttributeValues={':username':{'S': username}, ':password': {'S': password}})
+    
+    if user['Items'] == []:
+        return Response({"message": "O login falhou."}, status=status.HTTP_400_BAD_REQUEST)
+        
     if user is not None:
         refresh = RefreshToken()
-        refresh["user_id"] = user['Items'][0]['faceid']['S']
+        refresh["user_id"] = user['Items'][0]['username']['S']
         refresh["type"] = "refresh"
 
         access = refresh.access_token
-        access["user_id"] = user['Items'][0]['faceid']['S']
+        access["user_id"] = user['Items'][0]['username']['S']
 
         return Response({
             'message': 'Login successful',
