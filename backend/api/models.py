@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class emprestimo(models.Model):
     categories = (("CHAB","Crédito Habitacional"),
                   ("CAUT","Crédito Automotivo"),
@@ -12,9 +13,9 @@ class emprestimo(models.Model):
     documentos = models.ImageField(upload_to="img",blank=True, null=True)
     tiposempr = models.CharField(max_length=100,choices=categories,blank= True)
     tempo = models.DateTimeField(auto_now_add=True)
-    person = models.ForeignKey(max_length=100, on_delete=models.CASCADE, related_name="emprestimo")
+    person = models.CharField(max_length=100)
     estado = models.CharField(max_length=100)
-    
+
 
     def __str__(self):
         return self.person

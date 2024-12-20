@@ -22,20 +22,18 @@ function Loan({ route }) {
     const handleSubmit = async (e) => {
         console.log({ valor, duracao, salario, profissao, tiposempr,estado,documentos });
         e.preventDefault();
+        console.log(1)
         setLoading(true);
+        console.log(2)
         setError("");  // Resetando o erro ao tentar submeter
-
-        if (localStorage.getItem(ACCESS_TOKEN)) {
-            return navigate("/Home");  
-        }
-
         // Validação para garantir que os campos não estão vazios
         if (!valor || !duracao || !salario || !profissao || !tiposempr) {
             setError("Por favor, preencha todos os campos obrigatórios.");
             setLoading(false);
+            console.log(5)
             return;
         }
-
+        console.log(6)
         const loanData = {
             valor: parseFloat(valor),
             duracao: parseInt(duracao),
@@ -46,8 +44,9 @@ function Loan({ route }) {
             estado: estado
 
         };
-
+        console.log(7)
         try {
+            console.log(8)
             const response = await api.post("/Home/", loanData, {
                 headers: {
                     "Content-Type": "application/json",
