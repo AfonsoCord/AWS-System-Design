@@ -13,8 +13,13 @@ class LoginSerializer(serializers.Serializer):
 
 
 class LoanSerializer(serializers.Serializer):
-    Quantia = serializers.FloatField()
-    Tempo = serializers.IntegerField()
+    valor = serializers.CharField(max_length=255, required=True)
+    duracao = serializers.CharField(max_length=255, required=True)
+    salario = serializers.CharField(max_length=255, required=True)
+    profissao = serializers.CharField(max_length=255, required=True)
+    documentos = serializers.CharField(max_length=255, required=True)
+    tiposempr = serializers.CharField(max_length=255, required=True)
+    estado = serializers.ChoiceField(choices=[("por resolver", "Por Resolver"), ("resolvido", "Resolvido")], default="por resolver")
 
 
 class BankLoginSerializer(serializers.Serializer):

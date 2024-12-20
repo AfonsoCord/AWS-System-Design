@@ -14,6 +14,7 @@ class emprestimo(models.Model):
     tiposempr = models.CharField(max_length=100,choices=categories,blank= True)
     tempo = models.DateTimeField(auto_now_add=True)
     person = models.ForeignKey(User, on_delete=models.CASCADE, related_name="emprestimo")
+    estado = models.CharField(max_length=100)
 
 
     def __str__(self):

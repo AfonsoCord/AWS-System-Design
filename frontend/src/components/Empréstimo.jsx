@@ -12,12 +12,15 @@ function Loan({ route }) {
     const [profissao, setprofissao] = useState("");
     const [documentos, setdocumentos] = useState("");
     const [tiposempr, settiposempr] = useState("");
+    const [estado, setestado] = useState("por resolver");
+
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
+        console.log({ valor, duracao, salario, profissao, tiposempr,estado,documentos });
         e.preventDefault();
         setLoading(true);
         setError("");  // Resetando o erro ao tentar submeter
@@ -39,7 +42,8 @@ function Loan({ route }) {
             salario: parseInt(salario),
             profissao: profissao.toLowerCase(),
             documentos: documentos,
-            tiposempr: tiposempr
+            tiposempr: tiposempr,
+            estado: estado
 
         };
 
@@ -49,8 +53,8 @@ function Loan({ route }) {
                     "Content-Type": "application/json",
                 },
             });
-
-            navigate("/Home");  // Navega para login
+            
+            navigate("/Home");  // Navega para Home
 
         } catch (error) {
             alert(error.response?.data?.message || "An error occurred.");
@@ -114,7 +118,6 @@ function Loan({ route }) {
                 <option value="CEST">Crédito Estudantil</option>
                 <option value="CPES">Crédito Pessoal</option>
             </select>
-
 
             {error && <p style={{ color: "red" }}>{error}</p>}
             {loading && <LoadingIndicator />}
