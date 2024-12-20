@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN } from "../constants";
 
 function LoanForm({ route }) {
-    const [Quantia, setQuantia] = useState("");
-    const [Tempo, setTempo] = useState("");
+    const [valor, setvalor] = useState("");
+    const [duracao, setduracao] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
@@ -22,15 +22,15 @@ function LoanForm({ route }) {
         }
 
         // Validação para garantir que os campos não estão vazios
-        if (!Quantia || !Tempo || isNaN(Quantia) || isNaN(Tempo) || Quantia <= 0 || Tempo <= 0) {
+        if (!valor || !duracao || isNaN(valor) || isNaN(duracao) || valor <= 0 || duracao <= 0) {
             setError("Por favor, preencha todos os campos corretamente.");
             setLoading(false);
             return;
         }
 
         const loanData = {
-            Quantia: parseFloat(Quantia),
-            Tempo: parseInt(Tempo),
+            valor: parseFloat(valor),
+            duracao: parseInt(duracao),
         };
 
         try {
@@ -40,7 +40,6 @@ function LoanForm({ route }) {
                     "Content-Type": "application/json",
                 },
             });
-
             navigate("/login");  // Navega para login
 
         } catch (error) {
@@ -56,16 +55,16 @@ function LoanForm({ route }) {
             <input
                 className="form-input"
                 type="number"
-                value={Quantia}
-                onChange={(e) => setQuantia(e.target.value)}
+                value={valor}
+                onChange={(e) => setvalor(e.target.value)}
                 placeholder="Quantia do empréstimo"
                 required
             />
             <input
                 className="form-input"
                 type="number"
-                value={Tempo}
-                onChange={(e) => setTempo(e.target.value)}
+                value={duracao}
+                onChange={(e) => setduracao(e.target.value)}
                 placeholder="Duração do empréstimo"
                 required
             />
@@ -74,7 +73,7 @@ function LoanForm({ route }) {
             <button
                 className="form-button"
                 type="submit"
-                disabled={!Quantia || !Tempo || isNaN(Quantia) || isNaN(Tempo) || Quantia <= 0 || Tempo <= 0 || loading}
+                disabled={!valor || !duracao || isNaN(valor) || isNaN(duracao) || valor <= 0 || duracao <= 0 || loading}
             >
                 {loading ? "Processando..." : "Simular"}
             </button>
