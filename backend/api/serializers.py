@@ -6,14 +6,14 @@ class LoginSerializer(serializers.Serializer):
     imagem = serializers.ImageField(required = False)
 
 class LoanSerializer(serializers.Serializer):
-    valor = serializers.IntegerField(required=False)
-    duracao = serializers.IntegerField(required=False)
-    salario = serializers.IntegerField(required=False)
-    profissao = serializers.CharField(max_length=255, required=False)
-    documentos = serializers.ImageField(required=False)
-    tiposempr = serializers.ChoiceField(choices=emprestimo.categories, required=False)
+    user = serializers.CharField()
+    valor = serializers.IntegerField()
+    duracao = serializers.IntegerField()
+    salario = serializers.IntegerField()
+    profissao = serializers.CharField(max_length=255)
+    documentos = serializers.ImageField()
+    tiposempr = serializers.ChoiceField(choices=emprestimo.categories)
     estado = serializers.ChoiceField(choices=[("por resolver", "Por Resolver"), ("resolvido", "Resolvido")], default="por resolver")
-    person = serializers.CharField(max_length=100, required=False)  
     
     # vi aqui: https://stackoverflow.com/questions/42904336/django-rest-framework-create-notimplementederror-when-making-http-post-req
 

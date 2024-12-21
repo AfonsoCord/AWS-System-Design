@@ -1,7 +1,6 @@
 from django.db import models
 
 class emprestimo(models.Model):
-    id = models.AutoField(primary_key=True)
     user = models.CharField(max_length=100)
     categories = (("CHAB","Crédito Habitacional"),
                   ("CAUT","Crédito Automotivo"),

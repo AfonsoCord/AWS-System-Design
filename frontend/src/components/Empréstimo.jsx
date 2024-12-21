@@ -3,7 +3,7 @@ import api from "../api";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN,DURACAO,VALOR } from "../constants";
+import { ACCESS_TOKEN, REFRESH_TOKEN,DURACAO,VALOR, USERNAME } from "../constants";
 
 function Loan({ route }) {
     const [valor, setvalor] = useState(localStorage.getItem(VALOR) || "");
@@ -32,6 +32,7 @@ function Loan({ route }) {
         }
         
         const loanData = {
+            user: localStorage.getItem(USERNAME),
             valor: parseFloat(valor),
             duracao: parseInt(duracao),
             salario: parseInt(salario),
@@ -41,23 +42,26 @@ function Loan({ route }) {
             estado: estado,
         };
 
-        const token = localStorage.getItem(ACCESS_TOKEN); 
+        const access = localStorage.getItem(ACCESS_TOKEN)
 
-        try {
-            console.log(loanData)
-            const response = await api.post("/Home/", loanData, {
-                headers: {
-                    "Content-Type": "application/json"
-                },
-            });
-            console.log(2)
-            navigate("/Home");  // Navega para Home
+        if (access) {
 
-        } catch (error) {
-            alert(error.response?.data?.message || "An error occurred.");
-        } finally {
-            setLoading(false);
-        }
+            try {
+                const response = await api.post("/Home/", loanData, {
+                    headers: {
+                        Authorization: `Bearer ${access}`,
+                        "Content-Type": "application/json"
+                    },
+                });
+                console.log(2)
+                navigate("/Home");  // Navega para Home
+
+            } catch (error) {
+                alert(error.response?.data?.message || "An error occurred.");
+            } finally {
+                setLoading(false);
+            }
+    }
     };
 
     return (

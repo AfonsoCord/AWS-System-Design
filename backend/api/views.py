@@ -77,14 +77,14 @@ def login(request):
     except:
         return Response({"message": "O reconhecimento facial falhou."}, status=status.HTTP_400_BAD_REQUEST)
 
-    #user = emprestimo.objects.get(id_cara=id_cara)
     user = dynamodb.query(TableName="utilizadores", KeyConditionExpression="faceid = :id", ExpressionAttributeValues={':id':{'S':id_cara}})
+
     if user['Items'] != []:
         refresh = RefreshToken()
-        refresh["user_id"] = user['Items'][0]['faceid']['S']
+        refresh["user_id"] = user['Items'][0]['id']['N']
         refresh["type"] = "refresh"
         access = refresh.access_token
-        access["user_id"] = user['Items'][0]['faceid']['S']
+        access["user_id"] = user['Items'][0]['id']['N']
 
 
         return Response({
@@ -105,29 +105,30 @@ def loan_simulator(request):
         request_data = request.data.copy()
         request_data['person'] = request.user.username
 
-        serializer = LoanSerializer(data=request.data)
-        if serializer.is_valid():
+        if request_data:
             return Response("Parabéns!",status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response("erro", status=status.HTTP_400_BAD_REQUEST)
         
 
 
 @api_view(['POST'])
 def Home(request):
-    print("=========================================================0")
+    print("==========================================================")
     serializer = LoanSerializer(data=request.data)
 
     if serializer.is_valid():
 
         emprest = emprestimo(
-        valor = serializer.validated_data['valor'],
-        duracao = serializer.validated_data['duracao'],
-        salario = serializer.validated_data.get('salario'),
-        profissao = serializer.validated_data.get('profissao'),
-        documentos = serializer.validated_data.get('documentos'),
-        tiposempr = serializer.validated_data.get('tiposempr'),
-        estado = serializer.validated_data.get('estado'))
+            user = serializer.validated_data['user'],
+            valor = serializer.validated_data['valor'],
+            duracao = serializer.validated_data['duracao'],
+            salario = serializer.validated_data.get('salario'),
+            profissao = serializer.validated_data.get('profissao'),
+            documentos = serializer.validated_data.get('documentos'),
+            tiposempr = serializer.validated_data.get('tiposempr'),
+            estado = serializer.validated_data.get('estado'))
+        
         return Response("Parabéns!",status=status.HTTP_200_OK)
 
     #data = emprestimo.objects.create()
