@@ -33,7 +33,7 @@ function Loan({ route }) {
             console.log(5)
             return;
         }
-        console.log(6)
+        
         const loanData = {
             valor: parseFloat(valor),
             duracao: parseInt(duracao),
@@ -41,18 +41,20 @@ function Loan({ route }) {
             profissao: profissao.toLowerCase(),
             documentos: documentos,
             tiposempr: tiposempr,
-            estado: estado
-
+            estado: estado,
         };
-        console.log(7)
+
+        const token = localStorage.getItem('accessToken'); 
+        console.log("Token:", token);
+
         try {
             console.log(8)
             const response = await api.post("/Home/", loanData, {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`, 
                 },
             });
-            
             navigate("/Home");  // Navega para Home
 
         } catch (error) {

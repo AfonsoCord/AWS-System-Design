@@ -18,10 +18,11 @@ from rest_framework.decorators import permission_classes
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
+aws_access_key_id="ASIAYS2NSE42DSEVB7DP"
+aws_secret_access_key="m39Ku+L3ta5p3CMWTqRF8Y2eQlRG7hSZVrZNYm5q"
+aws_session_token="IQoJb3JpZ2luX2VjEN3//////////wEaCXVzLXdlc3QtMiJIMEYCIQC+kXiEnPT2TTmzx8Htpr5Y+NAxAUF8AQMt8se164MungIhAJDTFBK8u2tsYOwDocaZydyDRBBGEvIK2HA6rxPPVol4Kr0CCKb//////////wEQABoMNTkwMTgzODAyNjc2IgykCFr5b1ud0Evuez8qkQJ4fg9rqzigeGwNVdmEYydRMHsKOMovSoneMGud4GCivqv/qcbhAFcbjv89dSqWRU8k51N3OPTczwQZ+57HoIqECX65A4jakqAEneFQIMAx+pnfz687FSSsczMeWYIjLyLaP2sR3EEKwctFm6cIygnwjh5ryKRXMzfI/u+IjzvOxpQAwrq5GjF4a0SbiJ5eLb1G/q/VUYUEV9qstyHbPTty+LjOT8vRtiqSj8wZLh1/V3bT8S+NX0aePozk/R5GFyw8iv6tgmhpl25/Q4nIw51e9zqv8Hi3XhoGs6FHlwJRXo+c1IlR7tP9SUpX/sEVVurmL5S4usn+K8qXVLCrEiXB65vEVCINLvR13bzu62T5l0ww4+mauwY6nAGv5NFCf67fEIaR+yaAPCsPfsgGhFIpcz/9taKVlV9UZtQLy7mLCoA84fs3kchN9JNNYVxRnKOmq8iLpHzjLlLp2Zg7b5KizJMMyLFO7EpSbqsoxYsI5WymEd/8NCis4ebMZBKjWsxB56vpiWBVDH+xruL6zKIQqW04uXvbuODT90bT27ubBVsKKBD0YNMCJMhYkthZdqn0NypH+UU="
 
-aws_access_key_id="ASIAYS2NSE42DD4EFXFA"
-aws_secret_access_key="YDGNXF4PcBiyMzAMokqm0SXlnnx/th3FClWQkxpi"
-aws_session_token="IQoJb3JpZ2luX2VjENL//////////wEaCXVzLXdlc3QtMiJHMEUCIQCeHkHPEg4OkqNdn7p/KhZfsPqsrRnT5eFrLSxa+q2oXAIgBT30lsZxL9Kn31zH9W6U+cx1/dQAoPqv96Ht2NriTB0qvQIIm///////////ARAAGgw1OTAxODM4MDI2NzYiDIta+ft5FQ+XKYn6JCqRAl7v9bgCrh7Of5Uf2eWnDjROSWT6kuKmeQR3Qm7ka9Q9QayPSE5uo47P56PC6a0Th2YnAivxGQuiHU9CdkEAUaSswABhwOT66G6X78S2o80CDQqBxb7jY+Qb9ZMPcH4h8DsDqMC2q7DkM3dsFv9tJxMClfR01Geb+lDmzEK7vpBLJ07lR4XAVFn6DAOLWc56I90LMjbk21yTreDGfyfSzuRqWlJP5Oz6ZvdAMqW48S6T4+A7PrmFXvA8ilINq8DI26DGMvfF/YjJJqezmjCIYrDHaFIW03l8AL/QS/U2/B4A2NOJ8I0+Siwl0KiVhNMn/7hHUbJ9JcTpe3BtyYoxEfU3BNxmHxyfoD0m7Uu+0ctMdTCRw5i7BjqdAat+tifRZwRzF8J6ZrSJmwV49edYiak0T2UrrISpPcKcr1o/esFqhOMQbouqCHivWNBKBAD1ppJLcbisgqX5oRai0XBJt6Bb0CEPpUef3qN+MdB1Ac0ghyhVv/sIe0wL5tmWDVqSCtFSVunC5FmeJCaHWPn9UwkM7F7dJpulUFLd364emUGi8GrZt5CMHsw5/O+fkdDQV2dzUdpo/EI="
+
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
@@ -117,27 +118,30 @@ def loan_simulator(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated]) # acrescentei isto - matilde
 def Home(request):
-    print(request)
-    loan = emprestimo.objects.get(valor=12412)
+    print(request.headers.get('Authorization'))
     serializer = LoanSerializer(data=request.data)
+
     if serializer.is_valid():
         serializer.save(request.data)
 
-    emprest = emprestimo()
-    emprest.valor = request.data['valor']
-    emprest.duracao = request.data['duracao']
-    emprest.salario = request.data['salario']
-    emprest.profissao = request.data['profissao']
-    emprest.documentos = request.data['documentos']
-    emprest.tiposempr = request.data['tiposempr']
-    emprest.estado = request.data['estado']
-    emprest.save()
+        emprest = emprestimo(
+        valor = serializer.validated_data['valor'],
+        duracao = serializer.validated_data['duracao'],
+        salario = serializer.validated_data.get('salario'),
+        profissao = serializer.validated_data.get('profissao'),
+        documentos = serializer.validated_data.get('documentos'),
+        tiposempr = serializer.validated_data.get('tiposempr'),
+        estado = serializer.validated_data.get('estado')
+        )
+        emprest.save()
+        return Response("Parabéns!",status=status.HTTP_200_OK)
 
-
-    data = emprestimo.objects.create()
-
-    return Response("Parabéns!",status=status.HTTP_200_OK)
+    #data = emprestimo.objects.create()
+    
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

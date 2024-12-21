@@ -1,7 +1,8 @@
 from django.db import models
-
+import uuid
 
 class emprestimo(models.Model):
+    id = models.UUIDField(primary_key=True, max_length=100, default='default_id', unique=True)
     categories = (("CHAB","Crédito Habitacional"),
                   ("CAUT","Crédito Automotivo"),
                   ("CEST","Crédito Estudantil"),

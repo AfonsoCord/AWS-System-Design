@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import datetime
 from dotenv import load_dotenv
 import os
 import pymysql
@@ -46,9 +47,18 @@ REST_FRAMEWORK = {
    'DEFAULT_PERMISSION_CLASSES': [ 'rest_framework.permissions.IsAdminUser', ],
 }
 
+# vi aqui: https://stackoverflow.com/questions/78625080/simple-jwt-says-sometimes-token-is-invalid-or-expired-and-sometimes-gives-corr
+
+# https://stackoverflow.com/questions/59456398/unable-to-access-api-despite-entering-the-token
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=15),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=15),
+    "USER_ID_FIELD": 'id', # adicionei isto para definir o id
+    "USER_ID_CLAIM": "user_id",
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": False,
+    "LEEWAY": 300,  
 }
 
 
@@ -169,4 +179,7 @@ CORS_ALLOW_METHODS = [
     'DELETE',
 ]
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://localhost:5000"]    
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://localhost:5000'
+]    
