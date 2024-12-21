@@ -16,8 +16,6 @@ class LoanSerializer(serializers.Serializer):
     person = serializers.CharField(max_length=100, required=False)  
     
     # vi aqui: https://stackoverflow.com/questions/42904336/django-rest-framework-create-notimplementederror-when-making-http-post-req
-    def create(self,validated_data):
-        return emprestimo.objects.create(**validated_data)
 
 class BankLoginSerializer(serializers.Serializer):
     username = serializers.CharField()

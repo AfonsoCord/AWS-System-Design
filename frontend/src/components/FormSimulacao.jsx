@@ -3,7 +3,7 @@ import api from "../api";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN } from "../constants";
+import { ACCESS_TOKEN,DURACAO,VALOR } from "../constants";
 
 function LoanForm({ route }) {
     const [valor, setvalor] = useState("");
@@ -39,7 +39,9 @@ function LoanForm({ route }) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-            });
+            },
+            localStorage.setItem(DURACAO,loanData.duracao),
+            localStorage.setItem(VALOR,loanData.valor));
             navigate("/login");  // Navega para login
 
         } catch (error) {

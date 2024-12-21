@@ -3,11 +3,11 @@ import api from "../api";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN} from "../constants";
+import { ACCESS_TOKEN, REFRESH_TOKEN,DURACAO,VALOR } from "../constants";
 
 function Loan({ route }) {
-    const [valor, setvalor] = useState("");
-    const [duracao, setduracao] = useState("");
+    const [valor, setvalor] = useState(localStorage.getItem(VALOR) || "");
+    const [duracao, setduracao] = useState(localStorage.getItem(DURACAO) || "");
     const [salario, setsalario] = useState("");
     const [profissao, setprofissao] = useState("");
     const [documentos, setdocumentos] = useState("");
@@ -20,11 +20,8 @@ function Loan({ route }) {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        console.log({ valor, duracao, salario, profissao, tiposempr,estado,documentos });
         e.preventDefault();
-        console.log(1)
         setLoading(true);
-        console.log(2)
         setError("");  // Resetando o erro ao tentar submeter
         // Validação para garantir que os campos não estão vazios
         if (!valor || !duracao || !salario || !profissao || !tiposempr) {
@@ -44,17 +41,16 @@ function Loan({ route }) {
             estado: estado,
         };
 
-        const token = localStorage.getItem('accessToken'); 
-        console.log("Token:", token);
+        const token = localStorage.getItem(ACCESS_TOKEN); 
 
         try {
-            console.log(8)
+            console.log(loanData)
             const response = await api.post("/Home/", loanData, {
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`, 
+                    "Content-Type": "application/json"
                 },
             });
+            console.log(2)
             navigate("/Home");  // Navega para Home
 
         } catch (error) {

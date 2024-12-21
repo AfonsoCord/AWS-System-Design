@@ -15,9 +15,9 @@ from datetime import timedelta
 import datetime
 from dotenv import load_dotenv
 import os
-import pymysql
+#import pymysql
 
-pymysql.install_as_MySQLdb()
+#pymysql.install_as_MySQLdb()
 
 load_dotenv()
 
@@ -51,15 +51,10 @@ REST_FRAMEWORK = {
 
 # https://stackoverflow.com/questions/59456398/unable-to-access-api-despite-entering-the-token
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=15),
-    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=15),
-    "USER_ID_FIELD": 'id', # adicionei isto para definir o id
-    "USER_ID_CLAIM": "user_id",
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": False,
-    "LEEWAY": 300,  
-}
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
+    }
+
 
 
 # Application definition
@@ -169,7 +164,6 @@ CORS_ALLOWS_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = [
     'content-type',
-    'Authorization',  # Se você estiver usando tokens de autenticação
 ]
 
 CORS_ALLOW_METHODS = [
