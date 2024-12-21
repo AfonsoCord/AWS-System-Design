@@ -18,10 +18,10 @@ from rest_framework.decorators import permission_classes
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42GMHN7RL4"
-aws_secret_access_key="UqLkJU0+T6i6EZGPiMQ85N6C1eaVTfufuvjo7bEd"
-aws_session_token="IQoJb3JpZ2luX2VjEMz//////////wEaCXVzLXdlc3QtMiJHMEUCID3oNyDQvPZBdkO1yzZN0r4qdv354cIR1eDuOUpPFIesAiEApatKHllr7c4ZTsjFp5qbGo1h2/kEzAdw00hbgdoWnWsqvQIIlf//////////ARAAGgw1OTAxODM4MDI2NzYiDN4HOw9QcKAIH8CPnSqRAuEg4xGqDXnvp+h/961ONpcRJkdCMcVScR3kH2JrK8E+1vLofCpfjfUnze8LnJkbSLqYl34jD785BzY9mx6/zJxuEBso9zQZgIiql2W5CWYa3/rgzcbLYJ706AAyhNt8WnhCRY4CwZ5lLxwZt9PgIe4yjtu4PpmlRNRlsfunf5bZho9haPQNfvXPvMKS4ga07M/C1KLiy710LGtrYZaVpHR9zu98po3QTPr89IY5tyJG9fFSyfD0X14DOBa1ToVwllDYW36aV0U2RBtEDEZOLP7wlgCO8/niPNDQeiQoZtKGpe/rRVN7PJc26fHoueCFvyxncaqSX7UGgXcdskn2tx1XC+PV5Voy6oOh1wxJf49/9TDUjZe7BjqdAYdIJXPik8gMvPAsLBjsqPN2ySjaSj4LvLI8TgH+2bU2mfKzon0GdcakEk1mpNwNT24E16GiYHXb9cEsuJXxyhne+obRlG6k+K+XrdLv275TufbMJ4i/HDJNt/si2NDH16bzldnqGGg3SxFbmnKl96KXjNZZWb3YTToR8NV+ny8oXLdBJ63RFWHJYJEQGvn5uwn+HLpUT84pss8gAgM="
 
+aws_access_key_id="ASIAYS2NSE42DD4EFXFA"
+aws_secret_access_key="YDGNXF4PcBiyMzAMokqm0SXlnnx/th3FClWQkxpi"
+aws_session_token="IQoJb3JpZ2luX2VjENL//////////wEaCXVzLXdlc3QtMiJHMEUCIQCeHkHPEg4OkqNdn7p/KhZfsPqsrRnT5eFrLSxa+q2oXAIgBT30lsZxL9Kn31zH9W6U+cx1/dQAoPqv96Ht2NriTB0qvQIIm///////////ARAAGgw1OTAxODM4MDI2NzYiDIta+ft5FQ+XKYn6JCqRAl7v9bgCrh7Of5Uf2eWnDjROSWT6kuKmeQR3Qm7ka9Q9QayPSE5uo47P56PC6a0Th2YnAivxGQuiHU9CdkEAUaSswABhwOT66G6X78S2o80CDQqBxb7jY+Qb9ZMPcH4h8DsDqMC2q7DkM3dsFv9tJxMClfR01Geb+lDmzEK7vpBLJ07lR4XAVFn6DAOLWc56I90LMjbk21yTreDGfyfSzuRqWlJP5Oz6ZvdAMqW48S6T4+A7PrmFXvA8ilINq8DI26DGMvfF/YjJJqezmjCIYrDHaFIW03l8AL/QS/U2/B4A2NOJ8I0+Siwl0KiVhNMn/7hHUbJ9JcTpe3BtyYoxEfU3BNxmHxyfoD0m7Uu+0ctMdTCRw5i7BjqdAat+tifRZwRzF8J6ZrSJmwV49edYiak0T2UrrISpPcKcr1o/esFqhOMQbouqCHivWNBKBAD1ppJLcbisgqX5oRai0XBJt6Bb0CEPpUef3qN+MdB1Ac0ghyhVv/sIe0wL5tmWDVqSCtFSVunC5FmeJCaHWPn9UwkM7F7dJpulUFLd364emUGi8GrZt5CMHsw5/O+fkdDQV2dzUdpo/EI="
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
@@ -102,8 +102,10 @@ def login(request):
 @permission_classes([AllowAny])
 def loan_simulator(request):
     if request.method == 'POST':
-        serializer = LoanSerializer(data=request.data)
+        request_data = request.data.copy()
+        request_data['person'] = request.user.username
 
+        serializer = LoanSerializer(data=request.data)
         if serializer.is_valid():
             loan = serializer.save(valor = request.data["valor"],
                             duracao= request.data["duracao"])
