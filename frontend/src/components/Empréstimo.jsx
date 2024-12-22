@@ -33,7 +33,7 @@ function Loan({ route }) {
         
         const loanData = {
             user: localStorage.getItem(USERNAME),
-            valor: parseFloat(valor),
+            valor: parseInt(valor),
             duracao: parseInt(duracao),
             salario: parseInt(salario),
             profissao: profissao.toLowerCase(),
@@ -50,7 +50,7 @@ function Loan({ route }) {
                 const response = await api.post("/Home/", loanData, {
                     headers: {
                         Authorization: `Bearer ${access}`,
-                        "Content-Type": "application/json"
+                        "Content-Type": "multipart/form-data"
                     },
                 });
                 console.log(2)
