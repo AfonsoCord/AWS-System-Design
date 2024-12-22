@@ -29,7 +29,7 @@ function LoanForm({ route }) {
         }
 
         const loanData = {
-            valor: parseFloat(valor),
+            valor: parseInt(valor),
             duracao: parseInt(duracao),
         };
 

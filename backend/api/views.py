@@ -102,13 +102,12 @@ def login(request):
 @permission_classes([AllowAny])
 def loan_simulator(request):
     if request.method == 'POST':
-        request_data = request.data.copy()
-        request_data['person'] = request.user.username
+        request_data = request.data
 
         if request_data:
-            return Response("Parabéns!",status=status.HTTP_200_OK)
+            return Response("Parabéns!", status=status.HTTP_200_OK)
         else:
-            return Response("erro", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Erro na simulação.", status=status.HTTP_400_BAD_REQUEST)
         
 
 
