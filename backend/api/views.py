@@ -15,9 +15,9 @@ from rest_framework.decorators import permission_classes
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42NWERTTXW"
-aws_secret_access_key="vKgaTUJn7gAW7vufQSFkC+rmxMdyr1zTrFs/xb2h"
-aws_session_token="IQoJb3JpZ2luX2VjEPb//////////wEaCXVzLXdlc3QtMiJIMEYCIQCstTH++xE0RVReK8F/xInbO0d/+HTCVQrLOP3fJlazCwIhAIbVH9Gg956m8CTvqXWht3JEGJvYpnLrLrKTChKYt5k1Kr0CCL///////////wEQABoMNTkwMTgzODAyNjc2IgxBOdH3e5vqMhDDi/YqkQLxDwXBtJ94vtpVW2VGNL0Y94EL7GXh2PFvbPoZ5C6ZdMpgTIW9WaF2OxCVrZcepm6iJK9ruYhkdye5Z164PnNKNMaw90aP1kzBfMIx7uVZuH2/zEvSMiouyQr6vshk++JgaFqcur9Z/lkom+8vSPSI9L3rR/zcIpGnSJJvkLZc4FvJ7E2uZh584Pqd+xsTF0BK3l/h2unqEqyr1hln6FLQ9TE+fOhXYJbKlvG8zHkFce9VCinncx3zOzk+JvqI2N0sI3fKCJPtJMR1HgwQFKuJP33JEkUBAMwWVkXvg1ft4SY2GBDuiOar0kx3HlFfMhBLc8knmSbO0D7nGRDf/OACeJRf+yjf7X/AAa1l6Rm1wwYw/6mguwY6nAExo0IbKz/2JSUcb4kpiDnIBURFYWIYXKPevpSRaCRRCEkPtOsO2CXXpBUBKGJexeorcZWYeJjiP8z9SXDXBJzji+5tAXFfy4IzYlDnKcwgSi2/xfyfYLG+VSwxMgRLX93czzlUJOLsYNrulYMOLvuvoCvYxnM61JvZDXozzF227PL3WwF1HhkeqiMp/fckAWh4GswEtYY3xbgY57A="
+aws_access_key_id="ASIAYS2NSE42ANP7NXVX"
+aws_secret_access_key="C8p/+PI6SkN6UJ3ol2sSyo8VnDbxqmoOj3SbVAUV"
+aws_session_token="IQoJb3JpZ2luX2VjEPv//////////wEaCXVzLXdlc3QtMiJIMEYCIQCXvUdVT097IIOc+C7nleHbOEPntuiRwANwgIUh2O8QmAIhAN5t9Sy1ALGP9aQwUNHR8cH3jNhxjeyxtB67BY0YQNwsKr0CCMT//////////wEQABoMNTkwMTgzODAyNjc2IgxOvj3f1h3CoRRILHcqkQJgeoSPPP7VN7hAkvJjBI+8NVyta0hjLeSmzHnQzP1e/xUa24txQxtI3limTd2Slk2vAOaRZFmxk5ULH/19yWpVvBfkOhRsrQXG00tDD10nksCyfaiLay9azCfCNTJzqroyfVsjzBczM76SuI8YoIPH+tby0aqVJL2S2wwq0HuNLWHESvvpnyUQFn5fv5HOLJyLgZjhOAMtMquzqxbX61OF0Tad91bg/OBf9egoQbTCQ/4u8LuA1ug2t4prC4tCkDcsdWXih49Z20xSP2+uN7s2cMpHV3HjQ8Jazq5pPXlVTGigL1pSE+Jp/YGI0o/5lSyEqYTBWR2QO5e6iItdmYGxqwI6GxB38scuwsj0yAKbKIkwr7ehuwY6nAFr6S+AFWLM1rhE0097katk9OV94W/7CfRW3XRbhN3y+bw7C3SV+hJRdR+qDGmB262ftlhxI5vmt8vp4LnD0UBsazmGcg4k+uBZB/GSE2hsjqqumy/HZRv3mLOUPzXsvxnh86Fsv5n4G+BCJ3V++Xk+XrDgad3s6l67pWTiIYx05ooRKUzbd0SyxX/kt/Gl+jkPrw5qldvse6u7VgM="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -55,10 +55,6 @@ def login(request):
     serializer = LoginSerializer(data=request.data)
 
     serializer.is_valid(raise_exception=True)
-    
-    data = {
-            "CollectionId": "bankingsystem",
-            "Image": {}}
 
     try:
         response = client.search_faces_by_image(
@@ -102,9 +98,9 @@ def login(request):
 @permission_classes([AllowAny])
 def loan_simulator(request):
     if request.method == 'POST':
-        request_data = request.data
+        serializer = LoanSerializer(data=request.data)
 
-        if request_data:
+        if serializer.is_valid():
             return Response("Parabéns!", status=status.HTTP_200_OK)
         else:
             return Response("Erro na simulação.", status=status.HTTP_400_BAD_REQUEST)
@@ -143,8 +139,6 @@ def BankLogin(request):
 
     serializer = BankLoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-
-
 
     username = request.data['username']
     password = request.data['password']

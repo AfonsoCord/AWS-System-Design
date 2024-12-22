@@ -33,7 +33,7 @@ function Loan({ route }) {
         
         const loanData = {
             user: localStorage.getItem(USERNAME),
-            valor: parseInt(valor),
+            valor: parseFloat(valor),
             duracao: parseInt(duracao),
             salario: parseInt(salario),
             profissao: profissao.toLowerCase(),

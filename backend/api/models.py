@@ -6,7 +6,7 @@ class emprestimo(models.Model):
                   ("CAUT","Crédito Automotivo"),
                   ("CEST","Crédito Estudantil"),
                   ("CPES","Crédito Pessoal"))
-    valor = models.PositiveIntegerField()
+    valor = models.FloatField()
     duracao = models.PositiveIntegerField()
     salario = models.PositiveIntegerField(null=True)
     profissao = models.CharField(max_length=100)
