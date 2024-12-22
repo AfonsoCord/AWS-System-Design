@@ -10,4 +10,7 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('loan_simulator/', loan_simulator, name="Simulacao"),
     path('Home/', Home, name='Home'),
-    path('BankLogin/', BankLogin, name='BankLogin')]
+    path('BankLogin/', BankLogin, name='BankLogin'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    ]

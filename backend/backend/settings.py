@@ -38,13 +38,12 @@ ALLOWED_HOSTS = ["*"]
 
 #Para os tokens JWT funcionarem
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
-    ],
-   'DEFAULT_PERMISSION_CLASSES': [ 'rest_framework.permissions.IsAdminUser', ],
+    ]
 }
 
 # vi aqui: https://stackoverflow.com/questions/78625080/simple-jwt-says-sometimes-token-is-invalid-or-expired-and-sometimes-gives-corr

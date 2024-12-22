@@ -1,13 +1,10 @@
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from rest_framework import generics,status,permissions
+from rest_framework import status
 from .serializers import LoginSerializer, LoanSerializer, BankLoginSerializer
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import emprestimo
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 import boto3
-from django.db import models
 from rest_framework.response import Response
 import json
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -18,9 +15,9 @@ from rest_framework.decorators import permission_classes
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42NASWUQZZ"
-aws_secret_access_key="cvvdXLk0n2mFSCl+IxUdm+Ud38sRW7eQMaCqkzB6"
-aws_session_token="IQoJb3JpZ2luX2VjEOT//////////wEaCXVzLXdlc3QtMiJIMEYCIQD0tfVDdSbPMR48r/T3w9q0YTItZfd3ZIisUIJ1ocHscwIhAIjxjPrFOZVH63qZCZCifyenkHMI1e8t7JManKRPdeILKr0CCK3//////////wEQABoMNTkwMTgzODAyNjc2IgyeQCtX6VflCA4b/2MqkQJt+ZJvFnRKlmGe29ervj06v8sGvJtKTVnc0Ma512SGxKXGCJFg9VmyVG9R9MsBM/jmVLXCqHUZ680mTN85PN8Mp2wCH3L4qP0jY26BRkI7L+f0qCFhwZYN3JSrrxnPz8pKPjFGXGO37B2KsFivLAIMea0bEp49p4uqlm9BgiU3aR592UWgqepm5ZYFcNdRfKXyWXjB6jc2sDfZ2PVVpgyu5TKAWHDv3bGO+KNK6wI7Ib5j2JXPygBfIzdeiZTW5cHRuaIY+feuyNwNQEMjtZC5ZZyCldpY3DpMzLUmlsQSLkHfeJ7g2zWo/mEOxu0Nb5pN19B5DL4ZYgtVwLQiGoEEnUb5jkz9w41PT848QNhtQcUw27ucuwY6nAGxy+R3g2+P8kvUIK2O1W9oJb5vMNrfZoh0uz6nTbEYej7/KXOKIE3k7uKzo3yoC7xyat74HSw6SUZh9bew9A8pJ68iLJHZb89LfyPKgJBkYGxcYwir7f3lXQxYX1bM7MVsPRpZrohehYqE9PbrDN6xjGXjVZCn9ZXo/m0dGr4yYMfBPckkcVhddpYbRdCDal6Vs58pI1WMSdMqtrE="
+aws_access_key_id="ASIAYS2NSE42ARF2TUMK"
+aws_secret_access_key="PQIw9NqR3L7w8iTrwT6xDhSuO0SShpEfXLG/zlVZ"
+aws_session_token="IQoJb3JpZ2luX2VjEOj//////////wEaCXVzLXdlc3QtMiJHMEUCIQDApYl6SeyNYKCjv3efZat/KnyKWdqwjtnnk5HqbMhviQIgSNQ4ujuJ71S0AoeEJgOj6J1ffsB5K+NMfCVBwBf6V+gqvQIIsf//////////ARAAGgw1OTAxODM4MDI2NzYiDOcoLqzYxbZEzE7CeiqRAgp/3wEDZuNnRP93xgIJyLimD27qdyVTXzjiKZsrjlRjt25s+dQQFlPiXoxWSCbadlhj3Pq7zknoRX9UsyQvHsHbTBvThwY3sgCSxwyNplkv2kjixhbcdCSPvyPJ3XatLKc/rFznrVdeZb7m/ESUlU+l8uzNb0gTPtRJgQ2yK3THm9UdeMOguDV3PsRXg9rSGueSOTKAIZ7JgJP3gGKcCaOzcqlE/PdiZ3EcoUzx1+w9CJ/aYCKr1HrTNtJ2CPS+CDP7YrQJ0CYte6c1GhftAiJqju4q+G3osWupBretk0lAM1PFCxqWkl6K5Nh7H8gQFIdrzfbsmI+Y9NKWnf6+mFUhTTtizvGNftY1ixvlaQjWfjCurp27BjqdAcHRzhbVc6v1VZLhNNpqm0Hm7tuaqt0pR2zWdgxJjev+4F8ophUcmhE4HrSAt+5J4PtpHYDQJkIXD71jaNcs24oTETAupJCzPuMZUTeyTVP2sUMYalm2YyFMwEF8lmo6wBp2lGLAhA1ZLrjFavKU6Ul9Nwv46P11QobI1qESZZ86Tylvca1JOY7jHBZzSuehGr7PqOdxsYoA2a4Yp40="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -113,6 +110,7 @@ def loan_simulator(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def Home(request):
     print("==========================================================")
     serializer = LoanSerializer(data=request.data)
