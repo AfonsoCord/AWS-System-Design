@@ -78,10 +78,10 @@ def login(request):
 
     if user['Items'] != []:
         refresh = RefreshToken()
-        refresh["user_id"] = user['Items'][0]['id']['N']
+        refresh["user_id"] = int(user['Items'][0]['id']['N'])
         refresh["type"] = "refresh"
         access = refresh.access_token
-        access["user_id"] = user['Items'][0]['id']['N']
+        access["user_id"] = int(user['Items'][0]['id']['N'])
 
 
         return Response({

@@ -57,6 +57,7 @@ function Loan({ route }) {
                 navigate("/Home");  // Navega para Home
 
             } catch (error) {
+                console.error(error.response?.data || error.message);
                 alert(error.response?.data?.message || "An error occurred.");
             } finally {
                 setLoading(false);
