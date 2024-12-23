@@ -15,9 +15,9 @@ from rest_framework.decorators import permission_classes
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42ANP7NXVX"
-aws_secret_access_key="C8p/+PI6SkN6UJ3ol2sSyo8VnDbxqmoOj3SbVAUV"
-aws_session_token="IQoJb3JpZ2luX2VjEPv//////////wEaCXVzLXdlc3QtMiJIMEYCIQCXvUdVT097IIOc+C7nleHbOEPntuiRwANwgIUh2O8QmAIhAN5t9Sy1ALGP9aQwUNHR8cH3jNhxjeyxtB67BY0YQNwsKr0CCMT//////////wEQABoMNTkwMTgzODAyNjc2IgxOvj3f1h3CoRRILHcqkQJgeoSPPP7VN7hAkvJjBI+8NVyta0hjLeSmzHnQzP1e/xUa24txQxtI3limTd2Slk2vAOaRZFmxk5ULH/19yWpVvBfkOhRsrQXG00tDD10nksCyfaiLay9azCfCNTJzqroyfVsjzBczM76SuI8YoIPH+tby0aqVJL2S2wwq0HuNLWHESvvpnyUQFn5fv5HOLJyLgZjhOAMtMquzqxbX61OF0Tad91bg/OBf9egoQbTCQ/4u8LuA1ug2t4prC4tCkDcsdWXih49Z20xSP2+uN7s2cMpHV3HjQ8Jazq5pPXlVTGigL1pSE+Jp/YGI0o/5lSyEqYTBWR2QO5e6iItdmYGxqwI6GxB38scuwsj0yAKbKIkwr7ehuwY6nAFr6S+AFWLM1rhE0097katk9OV94W/7CfRW3XRbhN3y+bw7C3SV+hJRdR+qDGmB262ftlhxI5vmt8vp4LnD0UBsazmGcg4k+uBZB/GSE2hsjqqumy/HZRv3mLOUPzXsvxnh86Fsv5n4G+BCJ3V++Xk+XrDgad3s6l67pWTiIYx05ooRKUzbd0SyxX/kt/Gl+jkPrw5qldvse6u7VgM="
+aws_access_key_id="ASIAYS2NSE42OIHG2TF2"
+aws_secret_access_key="t/x/aBkT4V3u3hCXmutlcCM7rbNpIsD22c/9solO"
+aws_session_token="IQoJb3JpZ2luX2VjEAwaCXVzLXdlc3QtMiJHMEUCIQDZIU6xX+7s58SxqGnheQdpEQjGwBOnQomQmZAA2WA4wAIgGaunFUsG7FVnzzw6om2A/ye4xnpTX8d5d463LU8i4BgqvQII1f//////////ARAAGgw1OTAxODM4MDI2NzYiDKPN69hRDqHywuE0ySqRAsMc7MwD1Qi4zTB4us8FufYp2sKT+NMzEgP1gg87dfDfsmomuR51QbDMztTWkNTcakGpNmqEOAE5gVawvEwIxgodEPKC4Re+cd2t47ZQOYO/849zHR3izVxwsX3MRGXrNyuSiGirGy5g9OeruufFNzgCrWeBSzGCaHeb6QXHRDn3vCQWZFxWvSCeuQq04k9cXEwnBwmVmnXVmxVmMmLwrkqT6SMBZF7deF6nJwbOEGPRxZLJaVVpFatg2li4hiW1uNyta8Rxz8Rm6/ZmpQoqc1vFRmRLELBgiI5Qt4hD/NNnHsr7TwNi5ljpRqDQpULXcPv5ecdd0x/twgff6/in8I60ypysRDqpqCkrF8wEaAoC4zDMmKW7BjqdAXhYX376la6g8xO8T4VUYvEistv207hXSSC4Z2vdVN67FupSNlzLs4/UWwXKahs8u+unw0nACf/+oOLd0POW56UUvPnFsrkNrF1WzcolY7LkpgVYzcD6NBWV2DBmh5sCkfB3P3HTWmLvBbBK0Fbc6amV9TKVOaovedYs5BSF6oQLjU7kqN5ETqRm2m28ntixqE1lBZXaGPIG+JgqgYI="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -123,7 +123,8 @@ def Home(request):
             documentos = serializer.validated_data.get('documentos'),
             tiposempr = serializer.validated_data.get('tiposempr'),
             estado = serializer.validated_data.get('estado'))
-        
+        emprest.save()
+
         return Response("Parabéns!",status=status.HTTP_200_OK)
 
     #data = emprestimo.objects.create()

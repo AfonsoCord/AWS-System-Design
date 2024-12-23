@@ -27,7 +27,6 @@ function Loan({ route }) {
         if (!valor || !duracao || !salario || !profissao || !tiposempr) {
             setError("Por favor, preencha todos os campos obrigatórios.");
             setLoading(false);
-            console.log(5)
             return;
         }
         
@@ -53,7 +52,7 @@ function Loan({ route }) {
                         "Content-Type": "multipart/form-data"
                     },
                 });
-                console.log(2)
+                alert(error.response?.data?.message || "O seu empréstimo vai ser processado!");
                 navigate("/Home");  // Navega para Home
 
             } catch (error) {

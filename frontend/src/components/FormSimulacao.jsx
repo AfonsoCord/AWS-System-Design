@@ -42,6 +42,7 @@ function LoanForm({ route }) {
             },
             localStorage.setItem(DURACAO,loanData.duracao),
             localStorage.setItem(VALOR,loanData.valor));
+            alert(error.response?.data?.message || "Para prosseguir necessita fazer Login!");
             navigate("/login");  // Navega para login
 
         } catch (error) {
