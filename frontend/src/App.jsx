@@ -7,6 +7,8 @@ import Simulator from "./pages/Simulator"
 import Home from "./pages/Home"
 import BankLogin from "./pages/BankLogin"
 import ProtectedRoute from "./components/ProtectedRoute"
+import LoanStatusPage from "./pages/LoanStatusPage"
+
 
 function Logout() {
   localStorage.clear()
@@ -33,8 +35,9 @@ function App() {
         <Route path="/simulator" element={<Simulator/>}/>
         <Route path="/emprestimo" element={<Emprestimo/>}/>
         <Route path="/BankLogin" element={<BankLogin/>}/>
-        <Route path="*" element={<NotFound/>}></Route>
         <Route path="/Home" element= {<ProtectedRoute><Home/></ProtectedRoute>}/>
+        <Route path="/loan_status" element={<LoanStatusPage />}/>
+        <Route path="*" element={<NotFound/>}></Route>
       </Routes>
     </BrowserRouter>
   )

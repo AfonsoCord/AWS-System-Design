@@ -15,9 +15,9 @@ from rest_framework.decorators import permission_classes
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42OIHG2TF2"
-aws_secret_access_key="t/x/aBkT4V3u3hCXmutlcCM7rbNpIsD22c/9solO"
-aws_session_token="IQoJb3JpZ2luX2VjEAwaCXVzLXdlc3QtMiJHMEUCIQDZIU6xX+7s58SxqGnheQdpEQjGwBOnQomQmZAA2WA4wAIgGaunFUsG7FVnzzw6om2A/ye4xnpTX8d5d463LU8i4BgqvQII1f//////////ARAAGgw1OTAxODM4MDI2NzYiDKPN69hRDqHywuE0ySqRAsMc7MwD1Qi4zTB4us8FufYp2sKT+NMzEgP1gg87dfDfsmomuR51QbDMztTWkNTcakGpNmqEOAE5gVawvEwIxgodEPKC4Re+cd2t47ZQOYO/849zHR3izVxwsX3MRGXrNyuSiGirGy5g9OeruufFNzgCrWeBSzGCaHeb6QXHRDn3vCQWZFxWvSCeuQq04k9cXEwnBwmVmnXVmxVmMmLwrkqT6SMBZF7deF6nJwbOEGPRxZLJaVVpFatg2li4hiW1uNyta8Rxz8Rm6/ZmpQoqc1vFRmRLELBgiI5Qt4hD/NNnHsr7TwNi5ljpRqDQpULXcPv5ecdd0x/twgff6/in8I60ypysRDqpqCkrF8wEaAoC4zDMmKW7BjqdAXhYX376la6g8xO8T4VUYvEistv207hXSSC4Z2vdVN67FupSNlzLs4/UWwXKahs8u+unw0nACf/+oOLd0POW56UUvPnFsrkNrF1WzcolY7LkpgVYzcD6NBWV2DBmh5sCkfB3P3HTWmLvBbBK0Fbc6amV9TKVOaovedYs5BSF6oQLjU7kqN5ETqRm2m28ntixqE1lBZXaGPIG+JgqgYI="
+aws_access_key_id="ASIAYS2NSE42MR22NVIL"
+aws_secret_access_key="HGFj5wUrsgJEwuER6R+6kxHH/NtJQH7rB0618e6z"
+aws_session_token="IQoJb3JpZ2luX2VjECgaCXVzLXdlc3QtMiJGMEQCIEvQ6WbEYefxt6G1sV7sdi3jsGz/oVxvJFVwHqEK/GYmAiBTLPSBMmQd22yz4rTTscEnpolyN5BbToOO7Lkg14yh4Sq9Agjx//////////8BEAAaDDU5MDE4MzgwMjY3NiIMNLqD12pjqaWSFh2OKpECtiHVbfMDFJN4L3GS0eIljPHsQtqONI9ZQ1BUVsVlgDpBIG2ne5rxY5XnnuevakkYy6ZxdLz4WuFvlEtwd0arTPeOWrtNLgmj3g1mTm5JEbU+rv0wIxZl9/jSWK0BJjzLf7yhgzRyrIffSMsAhha7oh/Z+B1LFYvMcoDdPRSWFHYf3ISW0f7vt7Q08hQrTE18wdLF0mqU3AzlH76dBgf4LV5Cm+evsMXbHhoPpS+tvfagPYnXOFC45+NHhJZcRUBad3PBDG8sP4dBL5VSA/jS1gLtNPoSTQPgLnl6teQSxcj3pExgMu1dK7PO2WTOzCPDlqmzhHW9zN4TjM7NbnYJTXx9m7rYLjgIArSvZCEw6K7bMNyrq7sGOp4BX+cH6L+xeB3rmywmd82saaddBoB8xhJIf46HZBwd3HIj20K4gk7o8uHFiFqdCy+6iFP5fnpCkIsBu0y+aKqeFfoSv17dL0UOyQ80t+eYqPFZRKNxof1a9MMF4huhhTv1EqG3ASYZ8xEDJofhIfHb19zZMKns0dVRNVIgbjW5pxVe/aTbHqXnkgGAH3RdmGM8gGlg10oWIV0m/MiSwjI="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -168,3 +168,36 @@ def BankLogin(request):
         })
     else:
         return Response({'message': 'Invalid email or password', 'valid': '0'}, status=401)
+    
+
+# estado do empréstimo
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def loan_status(request):
+     
+    username = request.GET.get('username')
+
+    if not username:
+            return Response({"message": "O campo 'username' é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
+
+    emprestimos = emprestimo.objects.filter(user=username)
+
+    if not emprestimos.exists():
+        return Response({"message": "Não foram encontrados empréstimos para este utilizador."}, status=status.HTTP_404_NOT_FOUND)
+
+    emprestimo_data = [
+        {
+            "valor": emprest.valor,
+            "duracao": emprest.duracao,
+            "salario": emprest.salario,
+            "profissao" : emprest.profissao,
+            #"documentos": emprest.documentos,
+            "tiposempr": emprest.tiposempr,  
+            "tempo": emprest.tempo, 
+            "estado": emprest.estado,
+        }
+        for emprest in emprestimos
+    ]
+
+    return Response({
+        "message": f"Você possui {len(emprestimo_data)} empréstimo(s) em processamento.","emprestimos": emprestimo_data}, status=status.HTTP_200_OK)
