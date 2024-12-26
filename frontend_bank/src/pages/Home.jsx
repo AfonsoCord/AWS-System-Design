@@ -19,7 +19,9 @@ function Home() {
         <div>
             <h1>Bem vindo, {localStorage.getItem(USERNAME)}</h1>
             <button className="logout" onClick={handleLogout}>Logout</button>
-            <button className="loan_status" onClick={handleLoanStatus}>Estados dos empréstimos do cliente</button> 
+            <br/>
+            <br/>
+            <button className="logout" onClick={handleLoanStatus}>Estados dos empréstimos do cliente</button> 
         </div>
     );
 }

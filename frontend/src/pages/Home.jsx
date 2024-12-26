@@ -22,7 +22,9 @@ function Home() {
     return <div>
             <h1>Bem vindo, {localStorage.getItem(USERNAME)}</h1>
             <button className="logout" onClick={handleLogout}>Logout</button>
-            <button className="emprestimos" onClick={handleEstado}>Ver estado dos seus empréstimos</button>
+            <br/>
+            <br/>
+            <button className="logout" onClick={handleEstado}>Ver estado dos seus empréstimos</button>
             <Loan route="/Home/" method="Home" />
            </div>
 

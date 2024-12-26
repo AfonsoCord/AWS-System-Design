@@ -16,9 +16,9 @@ from rest_framework.permissions import IsAdminUser
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42JQRGOCEY"
-aws_secret_access_key="veUgGzNJ38oLdcO0JQlos+KoF+GlKF49myZoAEgt"
-aws_session_token="IQoJb3JpZ2luX2VjEFkaCXVzLXdlc3QtMiJHMEUCIGLyilRiU9+jnEZ/GX9xdIwhYrabERorVG88gB11IWJqAiEAxfvjY8K5Kd7XG9n0ibmsnGJPNACf99HanwssAC/j/B4qtAIIMhAAGgw1OTAxODM4MDI2NzYiDLZEhgOGPs7v6ml4CSqRAtYXVDvvmVzcrBnvRTgXJOlpOouRqM8QRGyzK9iyPIRPvm5rZ+h/Nv5XsQm4J67UUjirbDLVVQoMkSuXKDJkul6FnN/ZpP03gxHIgp6fiQKQL7wBJQB8YXp7fM7wGiLJXquzyhb/LlPovEsbrqoZrOGykMlBZeak2ikiAsd/bngmxal7e4YL4H4WxhsSTxc34LyMFc2tx0e6Z+2vBNiHqpjnKEHpY5gVAf2bxxR0LhomF5xg6Wt7+SqT+QfNBDBirmYO6pEiE72XrIXZgUcrl2lGsgM7NNe8J/dMpkzIKYbsLaQynGQ5JVe+g4canaK1na5sD+dPYmpyAv8M/mZtIhngwoiKgvyqaU9F4LrzNupIdDCthba7BjqdAXoz92SwzVhRdm9HPUCQNH6DMxbKy8pRHc9U9oUtS2ftiYmYglOaKz0XPqUUV1WVUqj5YU3ufEnTYtGHvdb+0V0l9JUdreUO8TzVeofi24fK0sQUiPPMXfSEMz/YLhfNzv/tpQk111xJHOG70xz8E0t+FdmGWeQuhrChEIBwrpdsEF9P1FBB0xEBUv9eFzshJmemkfpf27HFpCPLrmY="
+aws_access_key_id="ASIAYS2NSE42JUZEJMYN"
+aws_secret_access_key="3WBKTmxbKqGRINw6SO2MVkz5zm4jwTRCAw4Abxdz"
+aws_session_token="IQoJb3JpZ2luX2VjEF0aCXVzLXdlc3QtMiJIMEYCIQCVmw1F/1USh8LcSx1d3VziHVqrvbv2JXHM/OG9CCuQhQIhAPLjOW36MGO2qmKdAEchKz1RYu+Z5MSRRtwQ1J2o/hqzKrQCCDYQABoMNTkwMTgzODAyNjc2Igy5cI4AOGmSoAvVvJsqkQKBWl1epElPpCHEoGKyFOi6soGganZ1QuM5DBP5AHdnRs9p5Bh/l05jplK//K/M1tHH1JAcvHbm6oBKJbHMgETEJJLgRWtX6Lgeq4N6kvK197Md4rkriCOFpw/EzzAZYmjgSzcWr7Fiju0UjiBPiwFAoL7NddSYm5FO88fZVyGo7D7Z3plXrj/H3F1iZYIi24nMy9WxWCCnrgtbQ8L4xIdcBs0U0vHwNvBHm0ftl+yXwMu9vxyX57T5PXRqwAbhYh+Nu3GtlquSkKTt/ArrvNgG7hmDyegGkSYrEXFr5A3Zz1TXJEcAX1BOt86EKcDFkjnp5u5mNmCPpDzcGtQtdUe8j/DNZIKQ0p1m/T9h/AFtJbwwz/62uwY6nAEbYF1+ZNIktHfcQxMIafsWKqGHl/Fs87Fx/hb07pVPXIiIU+B+pviCPyBXzFj2OnsHeaQ5p4k3HRYsMz5LinG/P2eQPz2jOGGGVIohjc6XzqH0VBRx7SK9JIXAUYZ7vCixaD/7b+TZwSuhmG4i08YukYJWcZOSa4C7zLXRVBEVLIGvckIIlZ+8/F6YMVjq6Ysf7YkUrC6CKqzfdwo="
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
@@ -233,3 +233,26 @@ def loan_status_funcionarios(request):
     return Response({
         "message": f"Existe(m) {len(emprestimo_data)} empréstimo(s) registado(s) no sistema.", "emprestimos": emprestimo_data},
         status=status.HTTP_200_OK)
+
+
+# atualizar o estado e a decisão do emprestimo dos clientes
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def status_decision(request, id):
+    try:
+        emprestimo = emprestimo.objects.filter(id=id)
+
+        if emprestimo.exists():
+           
+            estado = request.data.get('estado')
+            decisao = request.data.get('decisao')
+
+            # atualiza o estado e a decisao diretamente na bd
+            emprestimo.update(estado=estado, decisao=decisao)
+
+            return Response({"message": "Empréstimo atualizado com sucesso."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Empréstimo não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    except Exception as e:
+        return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
