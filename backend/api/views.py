@@ -76,10 +76,12 @@ def login(request):
         refresh = RefreshToken()
         refresh["user_id"] = int(user['Items'][0]['id']['N'])
         refresh["username"] = user['Items'][0]['username']['S']
+        refresh["role"] = "cliente"
 
         access = refresh.access_token
         access["user_id"] = int(user['Items'][0]['id']['N'])
         access["username"] = user['Items'][0]['username']['S']
+        access["role"] = "cliente"
 
 
         return Response({
@@ -126,8 +128,6 @@ def Home(request):
         emprest.save()
 
         return Response("Parabéns!",status=status.HTTP_200_OK)
-
-    #data = emprestimo.objects.create()
     
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -156,16 +156,18 @@ def BankLogin(request):
         refresh = RefreshToken()
         refresh["user_id"] = int(user['Items'][0]['id']['N'])
         refresh["username"] = user['Items'][0]['username']['S']
+        refresh["role"] = "staff"
 
         access = refresh.access_token
         access["user_id"] = int(user['Items'][0]['id']['N'])
-        access["username"] = user['Items'][0]['username']['N']
+        access["username"] = user['Items'][0]['username']['S']
+        access["role"] = "staff"
 
         return Response({
             'message': 'Login successful',
             'access_token': str(access),
             'refresh_token': str(refresh),
-            'username': username,
+            'username': user['Items'][0]['username']['S'],
             'valid': '1'
         })
     else:
@@ -175,7 +177,7 @@ def BankLogin(request):
 
 # estado do empréstimo
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def loan_status(request):
      
     username = request.GET.get('username')
@@ -184,6 +186,7 @@ def loan_status(request):
             return Response({"message": "O campo 'username' é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
 
     emprestimos = emprestimo.objects.filter(user=username)
+    print(emprestimos)
 
     if not emprestimos.exists():
         return Response({"message": "Não foram encontrados empréstimos para este utilizador."}, status=status.HTTP_404_NOT_FOUND)
@@ -194,7 +197,6 @@ def loan_status(request):
             "duracao": emprest.duracao,
             "salario": emprest.salario,
             "profissao" : emprest.profissao,
-            #"documentos": emprest.documentos,
             "tiposempr": emprest.tiposempr,  
             "tempo": emprest.tempo, 
             "estado": emprest.estado,
@@ -208,7 +210,7 @@ def loan_status(request):
 
 # acesso ao estado de todos os empréstimos
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def loan_status_funcionarios(request):
     emprestimos = emprestimo.objects.all()
 
@@ -217,7 +219,7 @@ def loan_status_funcionarios(request):
 
     emprestimo_data = [
         {
-            "usuario": emprest.user.username,  
+            "cliente": emprest.user,  
             "valor": emprest.valor,
             "duracao": emprest.duracao,
             "salario": emprest.salario,
@@ -229,4 +231,5 @@ def loan_status_funcionarios(request):
     ]
 
     return Response({
-        "message": f"Existem {len(emprestimo_data)} empréstimo(s) registados no sistema.", "emprestimos": emprestimo_data}, status=status.HTTP_200_OK)
+        "message": f"Existe(m) {len(emprestimo_data)} empréstimo(s) registado(s) no sistema.", "emprestimos": emprestimo_data},
+        status=status.HTTP_200_OK)

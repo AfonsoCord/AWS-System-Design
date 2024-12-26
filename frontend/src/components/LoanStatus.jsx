@@ -1,31 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-import { USERNAME } from "../constants";
+import { ACCESS_TOKEN, USERNAME } from "../constants";
 
 function LoanStatus() {
     const [loans, setLoans] = useState([]);
     const [error, setError] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchLoanStatus = async () => {
             try {
                 const username = localStorage.getItem(USERNAME);
-                console.log("USERNAME from localStorage:", username);
+                const token = localStorage.getItem(ACCESS_TOKEN)
 
-                if (!username) {
+                if (!token) {
                     setIsAuthenticated(false);
                     throw new Error("Utilizador não autenticado.");
                 }
 
-                setIsAuthenticated(true); // Usuário autenticado
+                setIsAuthenticated(true);
+
                 const response = await api.get("/loan_status/", {
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    },
                     params: { username },
                 });
+
                 console.log("Response da API:", response.data);
                 setLoans(response.data.emprestimos || []);
+                setIsLoading(false);
             } catch (err) {
                 console.error("Erro na chamada da API:", err.message);
                 setError(err.message || "Erro ao processar os empréstimos.");
@@ -42,9 +49,11 @@ function LoanStatus() {
                 <>
                     <p style={{ color: "red" }}>{error}</p>
                     <button onClick={() => navigate("/login")} className="form-button">
-                        Faça Login
+                        Faça Login.
                     </button>
                 </>
+            ) : isLoading ? (
+                <p>Carregando empréstimos...</p>
             ) : (
                 <>
                     {loans.length > 0 ? (

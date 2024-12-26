@@ -36,7 +36,7 @@ function App() {
         <Route path="/emprestimo" element={<Emprestimo/>}/>
         <Route path="/BankLogin" element={<BankLogin/>}/>
         <Route path="/Home" element= {<ProtectedRoute><Home/></ProtectedRoute>}/>
-        <Route path="/loan_status" element={<LoanStatusPage />}/>
+        <Route path="/loan_status" element={<ProtectedRoute><LoanStatusPage/></ProtectedRoute>}/>
         <Route path="*" element={<NotFound/>}></Route>
       </Routes>
     </BrowserRouter>

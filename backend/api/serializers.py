@@ -13,7 +13,9 @@ class LoanSerializer(serializers.Serializer):
     profissao = serializers.CharField(max_length=255,required=False)
     documentos = serializers.ImageField(required=False)
     tiposempr = serializers.ChoiceField(choices=emprestimo.categories,required=False)
-    estado = serializers.ChoiceField(choices=[("por resolver", "Por Resolver"), ("resolvido", "Resolvido")], default="por resolver")
+    estado = serializers.ChoiceField(choices=[("por resolver", "Por Resolver"),
+                                              ("pendente", "Pendente"),
+                                              ("resolvido", "Resolvido")], default="por resolver")
     
     # vi aqui: https://stackoverflow.com/questions/42904336/django-rest-framework-create-notimplementederror-when-making-http-post-req
 

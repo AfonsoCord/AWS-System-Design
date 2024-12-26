@@ -5,6 +5,7 @@ import { ACCESS_TOKEN } from "../constants";
 function LoanStatus() {
     const [loans, setLoans] = useState([]);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchLoanStatus = async () => {
@@ -25,6 +26,7 @@ function LoanStatus() {
 
                 console.log("Resposta da API:", response.data);
                 setLoans(response.data.emprestimos || []);
+                setIsLoading(false);
             } catch (err) {
                 console.error("Erro na chamada da API:", err.response?.data || err.message);
                 setError(err.response?.data?.message || "Erro ao carregar os empréstimos dos clientes.");
@@ -41,6 +43,8 @@ function LoanStatus() {
                 <div>
                     <p style={{ color: "red" }}>{error}</p>
                 </div>
+            ) : isLoading ? (
+                <p>Carregando empréstimos...</p>
             ) : loans.length > 0 ? (
                 <div>
                     {loans.map((loan, index) => (
@@ -54,7 +58,7 @@ function LoanStatus() {
                                 boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
                             }}
                         >
-                            <p><strong>Usuário:</strong> {loan.usuario}</p>
+                            <p><strong>Cliente:</strong> {loan.cliente}</p>
                             <p><strong>Valor:</strong> {loan.valor}</p>
                             <p><strong>Duração:</strong> {loan.duracao}</p>
                             <p><strong>Estado:</strong> {loan.estado}</p>
