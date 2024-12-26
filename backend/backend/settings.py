@@ -52,7 +52,7 @@ REST_FRAMEWORK = {
 # https://stackoverflow.com/questions/59456398/unable-to-access-api-despite-entering-the-token
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7)
     }
 
 

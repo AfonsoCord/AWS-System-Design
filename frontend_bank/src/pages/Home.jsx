@@ -1,24 +1,27 @@
-/*import { useState, useEffect } from "react";
-import api from "./api";
-import Note from "./components/Note"*/
 import "../styles/Home.css"
-import {USERNAME} from "../constants";
+import { USERNAME } from "../constants";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-
     const navigate = useNavigate();
 
-    const handleLogout = () => { //botão de logout
+    const handleLogout = () => { // Função para o botão de logout
         localStorage.clear();
         navigate("/BankLogin");
     };
 
-    return <div>
+    // estado dos empréstimos
+    const handleLoanStatus = () => { 
+        navigate("/loan_status_funcionarios");  
+    };
+
+    return (
+        <div>
             <h1>Bem vindo, {localStorage.getItem(USERNAME)}</h1>
             <button className="logout" onClick={handleLogout}>Logout</button>
-           </div>
-
+            <button className="loan_status" onClick={handleLoanStatus}>Estados dos empréstimos do cliente</button> 
+        </div>
+    );
 }
 
 export default Home;

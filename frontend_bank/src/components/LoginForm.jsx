@@ -18,7 +18,6 @@ function LoginForm({ method }) {
         e.preventDefault();
 
         const formData = new FormData();
-
         formData.append("username", username);
         formData.append("password", password);
 
