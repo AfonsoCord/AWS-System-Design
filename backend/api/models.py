@@ -14,6 +14,8 @@ class emprestimo(models.Model):
     tiposempr = models.CharField(max_length=100,choices=categories,blank= True)
     tempo = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=100)
+    creditscore = models.CharField(max_length=100,null=True,blank=True)
+    decisao = models.CharField(max_length=100,null=True,blank=True)
 
 
     def __str__(self):
