@@ -1,5 +1,5 @@
 from django.urls import path
-from api.views import login, loan_simulator, Home, BankLogin, loan_status, loan_status_funcionarios
+from api.views import login, loan_simulator, Home, loan_status, BankLogin, loan_status_funcionarios, decision
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -11,6 +11,7 @@ urlpatterns = [
     path('loan_status/', loan_status, name='loan_status'),
     path('BankLogin/', BankLogin, name='BankLogin'),
     path('loan_status_funcionarios/', loan_status_funcionarios, name='loan_status_funcionarios'),
+    path('decision/', decision, name='decision'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     ]

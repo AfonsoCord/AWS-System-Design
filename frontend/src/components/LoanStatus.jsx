@@ -59,7 +59,7 @@ function LoanStatus() {
                     {loans.length > 0 ? (
                         <div>
                             <p>
-                                Você possui <strong>{loans.length}</strong> pedido(s) de empréstimo(s).
+                                Você possui <strong>{loans.length}</strong> pedido(s) de empréstimo(s):
                             </p>
                             {loans.map((loan, index) => (
                                 <div
@@ -76,6 +76,7 @@ function LoanStatus() {
                                     <p><strong>Valor:</strong> {loan.valor} €</p>
                                     <p><strong>Duração:</strong> {loan.duracao} meses</p>
                                     <p><strong>Estado:</strong> {loan.estado}</p>
+                                    {loan.decisao && <p><strong>Decisão:</strong> {loan.decisao}</p>}
                                 </div>
                             ))}
                             {}

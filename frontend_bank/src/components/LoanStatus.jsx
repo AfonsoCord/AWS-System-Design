@@ -42,37 +42,30 @@ function LoanStatus() {
         fetchLoanStatus();
     }, []);
 
-    const handleDecisionChange = (index, decision) => {
-        // Atualiza a decisão no estado de loanDecisions
-        setLoanDecisions(prev => ({
-            ...prev,
-            [index]: decision
-        }));
-        
-        // atualizar o estado do empréstimo com base na decisão
-        setLoans(prevLoans => {
-            return prevLoans.map((loan, i) => {
-                if (i === index) {
-                    let updatedLoan = { ...loan };
-                    
-                    // atualizar o estado do empréstimo conforme a decisão
-                    if (decision === "approve") {
-                        updatedLoan.estado = "Aprovado";
-                    } else if (decision === "interview") {
-                        updatedLoan.estado = "Pendente";
-                    } else if (decision === "reject") {
-                        updatedLoan.estado = "Rejeitado";
-                    }
-                    
-                    return updatedLoan;
-                }
-                return loan;
-            });
-        });
 
-        // armazenamos o estado da decisão no LocalStorage
-        localStorage.setItem(`decision-${index}`, decision);
-    };
+    const handleDecisionChange = async (index, decision, id, estado) => {
+        const token = localStorage.getItem(ACCESS_TOKEN)
+
+        const formData = new FormData();
+        formData.append("decisao", decision);
+        formData.append("id", id);
+        formData.append("estado", estado)
+
+        try {
+            const res = await api.post('/decision/', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            window.location.reload();
+
+        } catch (error) {
+            console.error(error.message);
+            alert(error.response?.data?.message || "Ocorreu um erro.");
+        }
+    }
 
     return (
         <div>
@@ -101,39 +94,45 @@ function LoanStatus() {
                                <span style={{ marginLeft: '20px' }}><strong>Salário:</strong> {loan.salario}</span>
                             </p>
                             <p><strong>Tipo de empréstimo:</strong> {loan.tiposempr}</p>
-                            <p><strong>Valor:</strong> {loan.valor}</p>
-                            <p><strong>Duração:</strong> {loan.duracao}</p>
+                            <p><strong>Valor:</strong> {loan.valor} €</p>
+                            <p><strong>Duração:</strong> {loan.duracao} meses</p>
+                            <p><strong>Credit Score:</strong> {loan.creditscore}</p>
+                            <br></br>
                             <p><strong>Estado:</strong> {loan.estado}</p>
-                            <div>
-                                <label>
-                                <strong>Decisão:</strong>
-                                    <input
-                                        type="radio"
-                                        name={`decision-${index}`}
-                                        checked={loanDecisions[index] === 'interview'}
-                                        onChange={() => handleDecisionChange(index, 'interview')}
-                                    />
-                                    <strong>Entrevista</strong>
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name={`decision-${index}`}
-                                        checked={loanDecisions[index] === 'approve'}
-                                        onChange={() => handleDecisionChange(index, 'approve')}
-                                    />
-                                    <strong>Aprovar</strong>
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name={`decision-${index}`}
-                                        checked={loanDecisions[index] === 'reject'}
-                                        onChange={() => handleDecisionChange(index, 'reject')}
-                                    />
-                                    <strong>Rejeitar</strong>
-                                </label>
-                            </div>
+                            {loan.decisao == null ? (
+                                <div>
+                                    <label>
+                                    <strong>Decisão:</strong>
+                                        <input
+                                            type="radio"
+                                            name={`decision-${index}`}
+                                            checked={loanDecisions[index] === 'interview'}
+                                            onChange={() => handleDecisionChange(index, 'requer entrevista', loan.id, 'pendente')}
+                                        />
+                                        <strong>Requer entrevista</strong>
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name={`decision-${index}`}
+                                            checked={loanDecisions[index] === 'approve'}
+                                            onChange={() => handleDecisionChange(index, 'aprovado', loan.id, 'resolvido')}
+                                        />
+                                        <strong>Aprovar</strong>
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name={`decision-${index}`}
+                                            checked={loanDecisions[index] === 'reject'}
+                                            onChange={() => handleDecisionChange(index, 'rejeitado', loan.id, 'resolvido')}
+                                        />
+                                        <strong>Rejeitar</strong>
+                                    </label>
+                                </div>
+                                ) : (
+                                    <p><strong>Decisão:</strong> {loan.decisao}</p>
+                                )}
                         </div>
                     ))}
                 </div>

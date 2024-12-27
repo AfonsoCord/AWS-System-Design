@@ -202,6 +202,7 @@ def loan_status(request):
             "tiposempr": tipos_empr[emprest.tiposempr],  
             "tempo": emprest.tempo, 
             "estado": emprest.estado,
+            "decisao": emprest.decisao
         }
         for emprest in emprestimos
     ]
@@ -272,6 +273,7 @@ def loan_status_funcionarios(request):
 
     emprestimo_data = [
         {
+            "id": emprest.id,
             "cliente": emprest.user,  
             "valor": emprest.valor,
             "duracao": emprest.duracao,
@@ -279,6 +281,8 @@ def loan_status_funcionarios(request):
             "profissao": emprest.profissao,
             "tiposempr": tipos_empr[emprest.tiposempr],  
             "estado": emprest.estado,
+            "creditscore": emprest.creditscore,
+            "decisao": emprest.decisao
         }
         for emprest in emprestimos
     ]
@@ -292,17 +296,17 @@ def loan_status_funcionarios(request):
 # atualizar o estado e a decisão do emprestimo dos clientes
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def status_decision(request, id):
+def decision(request):
+
     try:
-        emprestimo = emprestimo.objects.filter(id=id)
+        emp = emprestimo.objects.get(id=request.data.get('id'))
 
-        if emprestimo.exists():
-           
-            estado = request.data.get('estado')
-            decisao = request.data.get('decisao')
+        if emp:
 
-            # atualiza o estado e a decisao diretamente na bd
-            emprestimo.update(estado=estado, decisao=decisao)
+            # atualiza o estado e a decisão do empréstimo na base de dados
+            emp.estado = request.data.get('estado')
+            emp.decisao = request.data.get('decisao')
+            emp.save()
 
             return Response({"message": "Empréstimo atualizado com sucesso."}, status=status.HTTP_200_OK)
         else:
