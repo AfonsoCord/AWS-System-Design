@@ -92,7 +92,7 @@ function LoanStatus() {
                         </div>
                     ) : (
                         <div>
-                            <p>Não existem empréstimos disponíveis para exibição.</p>
+                            <p>Não existem pedidos de empréstimos disponíveis para exibição.</p>
                             <button
                                 onClick={() => navigate("/Home")}
                                 className="form-button"

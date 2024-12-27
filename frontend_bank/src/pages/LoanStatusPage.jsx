@@ -11,7 +11,7 @@ function LoanStatusPage() {
 
     return (
         <div>
-            <LoanStatus />
+            <LoanStatus route="/loan_status_funcionarios/"/>
             <button onClick={goBack}>Voltar</button> 
         </div>
     );

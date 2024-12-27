@@ -22,9 +22,9 @@ db_name = 'emprestimos'
 
 state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
 
-aws_access_key_id="ASIAYS2NSE42PQMTACUI"
-aws_secret_access_key="YhJ00GvZ3XzPkfgDiAWkOCdYIrBLdua35mF8XB5I"
-aws_session_token="IQoJb3JpZ2luX2VjEG4aCXVzLXdlc3QtMiJGMEQCIDnFBzErUTLBTlDD8WifPl9FkSauM8blcJU25gQwOxyLAiAf1ukC/NCZbUvrSjw4Fvd+XzAuRM9+GkMZzbDopg38Lyq0AghHEAAaDDU5MDE4MzgwMjY3NiIMEhxqH+U/8OTrRzxaKpECpgVVRtfLznKkSRl1NaZTqD5wfjuVIzXQL68VwNK2FkdeIL+pXYbA6YKFx4FoZf4ch9BTn9pHMn0m7nALlfeWC6VVC1OyetgJeWgxEopM3fZorsR9gctssQv67Zpfa2UGLU//uIhKYYsTvPQTCHAU5a89HmxrPLpqPMDkPGDoEJz8hL/z7O961lCxuxcEVIpAItBVcwA3vWVvEkxpq/Hx7fHpfzObzeE/CPK3uX1Oq7zy8i5G6Y83fkmL7elwa2TGbBfVp8DvUPFPyjFkKyQuZQwAj/5/Lug+JrCVPNb4CuA28ijS4xHRuCsN3UNeIjaIZJeN+i7moXjDd38As5A+DsiqVdb8SMZEpE3OWCWO1vsXMI/iursGOp4BhIle8oh7SpHP+cIm1RkUcjzDThzodTL6GTsW91dsD/dO4E3Bplj7uT4I/d6gUEagSU8iZeTbBhxn7qw4AH4l2w953QsyIcvv/LjS/C0Q1CqwpT06eCi/N3G2pWm3AWDRlq0bqWFVClUk25PD+l5GR/B8YjEwD+/nTYaCsDzvMmwX58ojZ7YjKuESslY/YEDJkou5IETIurIHoMay678="
+aws_access_key_id="ASIAYS2NSE42BTF4PNC4"
+aws_secret_access_key="11g5kwlXkZjmKd4RJKne4SNXclGx96VR/d6ZXaHf"
+aws_session_token="IQoJb3JpZ2luX2VjEHQaCXVzLXdlc3QtMiJHMEUCIQCUP7p/naKA3Kd405CYwNMeIpmKSMjlWiZHPzUX32ORgwIgUNmdL8xJZjPidLglrcaMIRtUbbh+Ijqm3RQCU6QgFV8qtAIITBAAGgw1OTAxODM4MDI2NzYiDMPLH/NmYeK1pdGMWSqRArdNKApgp801xyY2JaaV0K0afvI3kFBUUOU/N5N3e7sW5O4sIkfBBBC27Sic+5A4r9FdC/iftBGSP9KiehAb0ffW8sEBmRMtNilW43lH7juG07r2e4FB/hVqMrJa75xKR+LTRRZ1lpSnbdieDEQOlbZwvHwOC57XtJu/zjMK1Gm4LhI9zdJ+NoynVjHVkmLS2SxJzKOR31kTwK0zULpHvfCrfyLG+V8LBxfXmOlobYcX2MQCDNKeQTPDNdz6ig9rbXDSRg913D+O4Z4bGYdLaY4d1CcHKb4cxdjsgUKReeRT2dXhe6w8UodAUml5nM6g/0tAt1H/nfLC51RLEANulpztR/Sl/YwHigCXV3svY8TDDjDA+7u7BjqdAVZKMAm92kcxUUMYx22m/LUO35EayZCmWBixzY09BVZvsu7T6ju/tDDzVOJQQISwWyAcKwpOn/mpyxF2JcTS+rBMtaMgsqukUHtHf+uiCc4BvJYH8BrRkQUVxR+tA/xv7nRi0oktdqSz76kfKcHTBP8Q08mJM/rkbfMKvtNsLhYXdHjRxDpq8/TSX9SwXSj0L41bCzWdgGcxQXeEiSM="
 
 
 boto3.setup_default_session(
@@ -161,10 +161,10 @@ def Home(request):
                 cursor.execute(sql)
                 result = cursor.fetchone()[0]
 
-            input = f'{{"id": "{result}", "user": "{user}","valor": "{int(valor)}","duracao": "{int(duracao)}","salario": "{int(salario)}"}}'
+            input = f'{{"id": "{result}", "user": "{user}", "valor": "{int(valor)}", "duracao": "{int(duracao)}", "salario": "{int(salario)}"}}'
             
         # iniciar o workflow
-        stepfunction.start_execution(stateMachineArn = state_machine_arn,input = input)
+        stepfunction.start_execution(stateMachineArn = state_machine_arn, input = input)
 
         return Response(status=status.HTTP_200_OK)
     
@@ -184,9 +184,6 @@ def loan_status(request):
         return Response({"message": "O campo 'username' é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
 
     emprestimos = emprestimo.objects.filter(user=username)
-
-    if not emprestimos.exists():
-        return Response({"message": "Não foram encontrados empréstimos para este utilizador."}, status=status.HTTP_404_NOT_FOUND)
     
     tipos_empr = {"CHAB":"Crédito Habitacional",
                   "CAUT":"Crédito Automotivo",
@@ -262,9 +259,6 @@ def BankLogin(request):
 def loan_status_funcionarios(request):
 
     emprestimos = emprestimo.objects.all()
-
-    if not emprestimos:
-        return Response({"message": "Não foram encontrados empréstimos de clientes."}, status=status.HTTP_404_NOT_FOUND)
     
     tipos_empr = {"CHAB":"Crédito Habitacional",
                   "CAUT":"Crédito Automotivo",
