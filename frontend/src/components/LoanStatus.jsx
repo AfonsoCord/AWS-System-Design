@@ -53,7 +53,7 @@ function LoanStatus() {
                     </button>
                 </>
             ) : isLoading ? (
-                <p>Carregando empréstimos...</p>
+                <p>A carregar os empréstimos...</p>
             ) : (
                 <>
                     {loans.length > 0 ? (

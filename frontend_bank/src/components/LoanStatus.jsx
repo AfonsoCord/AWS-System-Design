@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import { ACCESS_TOKEN } from "../constants";
+import "../styles/LoanStatus.css";
 
 function LoanStatus() {
     const [loans, setLoans] = useState([]);
@@ -42,8 +43,27 @@ function LoanStatus() {
         fetchLoanStatus();
     }, []);
 
+        
+    const handleSelectDecision = (index, decision) => {
+        setLoanDecisions((prevDecisions) => ({
+            ...prevDecisions,
+            [index]: decision,
+        }));
+    };
 
-    const handleDecisionChange = async (index, decision, id, estado) => {
+
+    const handleSubmit = async (index, id) => {
+        const decision = loanDecisions[index];
+        if (!decision) {
+            alert("Por favor, selecione uma decisão antes de submeter.");
+            return;
+        }
+
+        const estado =
+            decision === "requer entrevista" ? "pendente" :
+            decision === "aprovado" ? "resolvido" :
+            "resolvido";
+
         const token = localStorage.getItem(ACCESS_TOKEN)
 
         const formData = new FormData();
@@ -65,7 +85,7 @@ function LoanStatus() {
             console.error(error.message);
             alert(error.response?.data?.message || "Ocorreu um erro.");
         }
-    }
+    };
 
     return (
         <div>
@@ -106,8 +126,8 @@ function LoanStatus() {
                                         <input
                                             type="radio"
                                             name={`decision-${index}`}
-                                            checked={loanDecisions[index] === 'interview'}
-                                            onChange={() => handleDecisionChange(index, 'requer entrevista', loan.id, 'pendente')}
+                                            checked={loanDecisions[index] === 'requer entrevista'}
+                                            onChange={() => handleSelectDecision(index, 'requer entrevista')}
                                         />
                                         <strong>Requer entrevista</strong>
                                     </label>
@@ -115,8 +135,8 @@ function LoanStatus() {
                                         <input
                                             type="radio"
                                             name={`decision-${index}`}
-                                            checked={loanDecisions[index] === 'approve'}
-                                            onChange={() => handleDecisionChange(index, 'aprovado', loan.id, 'resolvido')}
+                                            checked={loanDecisions[index] === 'aprovado'}
+                                            onChange={() => handleSelectDecision(index, 'aprovado')}
                                         />
                                         <strong>Aprovar</strong>
                                     </label>
@@ -124,11 +144,18 @@ function LoanStatus() {
                                         <input
                                             type="radio"
                                             name={`decision-${index}`}
-                                            checked={loanDecisions[index] === 'reject'}
-                                            onChange={() => handleDecisionChange(index, 'rejeitado', loan.id, 'resolvido')}
+                                            checked={loanDecisions[index] === 'rejeitado'}
+                                            onChange={() => handleSelectDecision(index, 'rejeitado')}
                                         />
                                         <strong>Rejeitar</strong>
                                     </label>
+                                    <button
+                                        className="form-button"
+                                        onClick={() => handleSubmit(index, loan.id)}
+                                        //style={{ marginTop: "10px", padding: "5px 10px" }}
+                                    >
+                                        Submeter Decisão
+                                    </button>
                                 </div>
                                 ) : (
                                     <p><strong>Decisão:</strong> {loan.decisao}</p>
