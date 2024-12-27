@@ -11,14 +11,23 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAdminUser
-
+import pymysql
 
 bucket_name = 'bankingsystem'
 collection_name = 'faces' # ficou guardado no regnonition não no s3
 
-aws_access_key_id="ASIAYS2NSE42JUZEJMYN"
-aws_secret_access_key="3WBKTmxbKqGRINw6SO2MVkz5zm4jwTRCAw4Abxdz"
-aws_session_token="IQoJb3JpZ2luX2VjEF0aCXVzLXdlc3QtMiJIMEYCIQCVmw1F/1USh8LcSx1d3VziHVqrvbv2JXHM/OG9CCuQhQIhAPLjOW36MGO2qmKdAEchKz1RYu+Z5MSRRtwQ1J2o/hqzKrQCCDYQABoMNTkwMTgzODAyNjc2Igy5cI4AOGmSoAvVvJsqkQKBWl1epElPpCHEoGKyFOi6soGganZ1QuM5DBP5AHdnRs9p5Bh/l05jplK//K/M1tHH1JAcvHbm6oBKJbHMgETEJJLgRWtX6Lgeq4N6kvK197Md4rkriCOFpw/EzzAZYmjgSzcWr7Fiju0UjiBPiwFAoL7NddSYm5FO88fZVyGo7D7Z3plXrj/H3F1iZYIi24nMy9WxWCCnrgtbQ8L4xIdcBs0U0vHwNvBHm0ftl+yXwMu9vxyX57T5PXRqwAbhYh+Nu3GtlquSkKTt/ArrvNgG7hmDyegGkSYrEXFr5A3Zz1TXJEcAX1BOt86EKcDFkjnp5u5mNmCPpDzcGtQtdUe8j/DNZIKQ0p1m/T9h/AFtJbwwz/62uwY6nAEbYF1+ZNIktHfcQxMIafsWKqGHl/Fs87Fx/hb07pVPXIiIU+B+pviCPyBXzFj2OnsHeaQ5p4k3HRYsMz5LinG/P2eQPz2jOGGGVIohjc6XzqH0VBRx7SK9JIXAUYZ7vCixaD/7b+TZwSuhmG4i08YukYJWcZOSa4C7zLXRVBEVLIGvckIIlZ+8/F6YMVjq6Ysf7YkUrC6CKqzfdwo="
+user_name = 'LabRole'
+password = 'projetoes2024'
+rds_proxy_host = 'database.c3oqw4668mx3.us-east-1.rds.amazonaws.com'
+db_name = 'emprestimos'
+
+state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
+
+aws_access_key_id="ASIAYS2NSE42N5NWP7QM"
+aws_secret_access_key="RWkfiGg42WjTR7uFEVsqrGlLJO896iJ1BnFsuAPj"
+aws_session_token="IQoJb3JpZ2luX2VjEGEaCXVzLXdlc3QtMiJGMEQCIGyqy4VXdhaHoDNgZ7JgmwvNrmh6fIEM2VHKUdrdWrdUAiB3tOvnpSvUXaWm2p58T1LrR49td+0LmRq5hCvpyfMNyiq0Agg6EAAaDDU5MDE4MzgwMjY3NiIMzL1pma1wP4AtS+3BKpECxWgIlY74IEHoiWAMuxMHFyQEAYicNN31QvVCgm2F31gE8Xd9Z67lHuKy4/uRP2Id0sVdhIwA7XAc1lc1k02KPX6/ckcv7rIKHNJEGkIk2oKsbsmN3dTakWXBcDqKh8debSOt6/t+nmG1XPyN7meELP7f9yVknVI5+xJfxv/UfFlfElcHW2hl/ulyADW0zFBqsWwRt+Z3gSomJ55YpI6OJTkRgPM5HQVzQk+4F0MeMIWSxvQZqzHFrFxfeX7pUuC7HakndNNgIevwLZkawA8r2k1iF8i2bA1OuddVAFVvrlei+beNgMYT7mTxcGamDpvw2jbWfad78mmNVQ6LhZ84Nwz7RZkBh2hPD4lt1o2CKxX4MIz/t7sGOp4Becm/9FJ8Valf4E9L65ahYDljLw8sCJdgFRsEPxtaYcpXE1wCsJ7Kvwg10dnIyWLyhRmhBlbs6Q+I37ujAy2zSUW7e0MaVzOOIht6zbIn3FyOj0uMmQ0fMhsxaGesmd8nWBov3TCEmOdtvg2lyqAeeJQYSQqGIrJYAws1TBrxe1PDfDmlDcudR2+EZofTOpPa6Gwv7e/hDCKFDDglmKg="
+
+
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
@@ -45,6 +54,12 @@ dynamodb = boto3.client('dynamodb',
                 aws_secret_access_key=aws_secret_access_key,
                 aws_session_token=aws_session_token
                 )
+
+stepfunction = boto3.client('stepfunctions',
+                    region_name = 'us-east-1',
+                aws_access_key_id = aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key,
+                aws_session_token=aws_session_token)
 
 my_bucket = s3.Bucket(bucket_name)   
 
@@ -108,11 +123,12 @@ def loan_simulator(request):
             return Response("Erro na simulação.", status=status.HTTP_400_BAD_REQUEST)
         
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Home(request):
     serializer = LoanSerializer(data=request.data)
+    conn = pymysql.connect(host=rds_proxy_host, user=user_name, passwd=password, db=db_name, connect_timeout=30)
+
 
     if serializer.is_valid():
 
@@ -126,12 +142,25 @@ def Home(request):
             tiposempr = serializer.validated_data.get('tiposempr'),
             estado = serializer.validated_data.get('estado'))
         emprest.save()
+        user = serializer.validated_data['user']
+        valor = serializer.validated_data['valor']
+        duracao = serializer.validated_data['duracao']
+        salario = serializer.validated_data.get('salario')
+        with conn:
+            with conn.cursor() as cursor:
+                
+                sql = "SELECT MAX(id) AS ultimo_id FROM `api_emprestimo`"   
+                cursor.execute(sql)
+                result = cursor.fetchone()[0]
 
-        return Response("Parabéns!",status=status.HTTP_200_OK)
+            input = f'{{"id": "{result}", "user": "{user}","valor": "{int(valor)}","duracao": "{int(duracao)}","salario": "{int(salario)}"}}'
+            
+        stepfunction.start_execution(stateMachineArn = state_machine_arn,input = input)
+
+        return Response(status=status.HTTP_200_OK)
     
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @api_view(['POST'])
