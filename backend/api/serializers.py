@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import emprestimo
-from datetime import datetime
 
 class LoginSerializer(serializers.Serializer):
     imagem = serializers.ImageField(required=False)
@@ -10,9 +9,9 @@ class LoanSerializer(serializers.Serializer):
     valor = serializers.FloatField()
     duracao = serializers.IntegerField()
     salario = serializers.IntegerField(required=False)
-    profissao = serializers.CharField(max_length=255,required=False)
+    profissao = serializers.CharField(max_length=255, required=False)
     documentos = serializers.ImageField(required=False)
-    tiposempr = serializers.ChoiceField(choices=emprestimo.categories,required=False)
+    tiposempr = serializers.ChoiceField(choices=emprestimo.categories, required=False)
     estado = serializers.ChoiceField(choices=[("por resolver", "Por Resolver"),
                                               ("pendente", "Pendente"),
                                               ("resolvido", "Resolvido")], default="por resolver")

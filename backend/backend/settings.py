@@ -39,7 +39,7 @@ ALLOWED_HOSTS = ["*"]
 #Para os tokens JWT funcionarem
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "api.authentication.CustomJWTAuthentication"
+        "api.authentication.JWTAuthentication"
         #"rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [

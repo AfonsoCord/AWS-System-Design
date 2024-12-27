@@ -13,7 +13,7 @@ function Login() {
         }
     }, [navigate]);
 
-    return <Form route="/login/" method="login" />
+    return <Form route="/login/" method="login"/>
 }
 
 export default Login

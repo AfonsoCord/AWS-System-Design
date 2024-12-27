@@ -3,7 +3,7 @@ import api from "../api";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN, DURACAO, VALOR, USERNAME } from "../constants";
+import { ACCESS_TOKEN, DURACAO, VALOR, USERNAME } from "../constants";
 
 function Loan({ route }) {
     const [valor, setvalor] = useState(localStorage.getItem(VALOR) || "");
@@ -135,7 +135,7 @@ function Loan({ route }) {
                     className="form-button"
                     onClick={handleLoanStatus}
                 >
-                    Ver Estado dos Empréstimos
+                    Ver estado dos seus empréstimos
                 </button>
             )}
         </form>

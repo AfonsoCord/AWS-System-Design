@@ -96,7 +96,11 @@ function LoanStatus() {
                                 boxShadow: "0 2px 5px rgba(176, 222, 235, 0.1)",
                             }}
                         >
-                            <p><strong>Cliente:</strong> {loan.cliente}</p>
+                            <p><strong>Cliente:</strong> {loan.cliente}
+                               <span style={{ marginLeft: '20px' }}><strong>Profissão:</strong> {loan.profissao}</span>
+                               <span style={{ marginLeft: '20px' }}><strong>Salário:</strong> {loan.salario}</span>
+                            </p>
+                            <p><strong>Tipo de empréstimo:</strong> {loan.tiposempr}</p>
                             <p><strong>Valor:</strong> {loan.valor}</p>
                             <p><strong>Duração:</strong> {loan.duracao}</p>
                             <p><strong>Estado:</strong> {loan.estado}</p>

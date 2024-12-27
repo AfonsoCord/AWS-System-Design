@@ -10,11 +10,10 @@ import json
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAdminUser
 import pymysql
 
 bucket_name = 'bankingsystem'
-collection_name = 'faces' # ficou guardado no regnonition não no s3
+collection_name = 'faces'
 
 user_name = 'LabRole'
 password = 'projetoes2024'
@@ -23,9 +22,9 @@ db_name = 'emprestimos'
 
 state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
 
-aws_access_key_id="ASIAYS2NSE42N5NWP7QM"
-aws_secret_access_key="RWkfiGg42WjTR7uFEVsqrGlLJO896iJ1BnFsuAPj"
-aws_session_token="IQoJb3JpZ2luX2VjEGEaCXVzLXdlc3QtMiJGMEQCIGyqy4VXdhaHoDNgZ7JgmwvNrmh6fIEM2VHKUdrdWrdUAiB3tOvnpSvUXaWm2p58T1LrR49td+0LmRq5hCvpyfMNyiq0Agg6EAAaDDU5MDE4MzgwMjY3NiIMzL1pma1wP4AtS+3BKpECxWgIlY74IEHoiWAMuxMHFyQEAYicNN31QvVCgm2F31gE8Xd9Z67lHuKy4/uRP2Id0sVdhIwA7XAc1lc1k02KPX6/ckcv7rIKHNJEGkIk2oKsbsmN3dTakWXBcDqKh8debSOt6/t+nmG1XPyN7meELP7f9yVknVI5+xJfxv/UfFlfElcHW2hl/ulyADW0zFBqsWwRt+Z3gSomJ55YpI6OJTkRgPM5HQVzQk+4F0MeMIWSxvQZqzHFrFxfeX7pUuC7HakndNNgIevwLZkawA8r2k1iF8i2bA1OuddVAFVvrlei+beNgMYT7mTxcGamDpvw2jbWfad78mmNVQ6LhZ84Nwz7RZkBh2hPD4lt1o2CKxX4MIz/t7sGOp4Becm/9FJ8Valf4E9L65ahYDljLw8sCJdgFRsEPxtaYcpXE1wCsJ7Kvwg10dnIyWLyhRmhBlbs6Q+I37ujAy2zSUW7e0MaVzOOIht6zbIn3FyOj0uMmQ0fMhsxaGesmd8nWBov3TCEmOdtvg2lyqAeeJQYSQqGIrJYAws1TBrxe1PDfDmlDcudR2+EZofTOpPa6Gwv7e/hDCKFDDglmKg="
+aws_access_key_id="ASIAYS2NSE42PQMTACUI"
+aws_secret_access_key="YhJ00GvZ3XzPkfgDiAWkOCdYIrBLdua35mF8XB5I"
+aws_session_token="IQoJb3JpZ2luX2VjEG4aCXVzLXdlc3QtMiJGMEQCIDnFBzErUTLBTlDD8WifPl9FkSauM8blcJU25gQwOxyLAiAf1ukC/NCZbUvrSjw4Fvd+XzAuRM9+GkMZzbDopg38Lyq0AghHEAAaDDU5MDE4MzgwMjY3NiIMEhxqH+U/8OTrRzxaKpECpgVVRtfLznKkSRl1NaZTqD5wfjuVIzXQL68VwNK2FkdeIL+pXYbA6YKFx4FoZf4ch9BTn9pHMn0m7nALlfeWC6VVC1OyetgJeWgxEopM3fZorsR9gctssQv67Zpfa2UGLU//uIhKYYsTvPQTCHAU5a89HmxrPLpqPMDkPGDoEJz8hL/z7O961lCxuxcEVIpAItBVcwA3vWVvEkxpq/Hx7fHpfzObzeE/CPK3uX1Oq7zy8i5G6Y83fkmL7elwa2TGbBfVp8DvUPFPyjFkKyQuZQwAj/5/Lug+JrCVPNb4CuA28ijS4xHRuCsN3UNeIjaIZJeN+i7moXjDd38As5A+DsiqVdb8SMZEpE3OWCWO1vsXMI/iursGOp4BhIle8oh7SpHP+cIm1RkUcjzDThzodTL6GTsW91dsD/dO4E3Bplj7uT4I/d6gUEagSU8iZeTbBhxn7qw4AH4l2w953QsyIcvv/LjS/C0Q1CqwpT06eCi/N3G2pWm3AWDRlq0bqWFVClUk25PD+l5GR/B8YjEwD+/nTYaCsDzvMmwX58ojZ7YjKuESslY/YEDJkou5IETIurIHoMay678="
 
 
 boto3.setup_default_session(
@@ -64,6 +63,7 @@ stepfunction = boto3.client('stepfunctions',
 my_bucket = s3.Bucket(bucket_name)   
 
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request): 
@@ -72,6 +72,7 @@ def login(request):
     serializer.is_valid(raise_exception=True)
 
     try:
+        # procurar id da cara
         response = client.search_faces_by_image(
             CollectionId=collection_name,
             Image={'Bytes': request.FILES['photo'].read()},
@@ -83,6 +84,7 @@ def login(request):
     except:
         return Response({"message": "O reconhecimento facial falhou."}, status=status.HTTP_400_BAD_REQUEST)
     
+    # procurar utilizador na base de dados
     user = dynamodb.query(TableName="utilizadores", KeyConditionExpression="faceid = :id", ExpressionAttributeValues={':id':{'S':id_cara}})
 
     if user['Items'] != []:
@@ -100,14 +102,14 @@ def login(request):
 
 
         return Response({
-            'message': 'Login successful',
+            'message': 'Login realizado com sucesso.',
             'access_token': str(access),
             'refresh_token': str(refresh),
             'username': user['Items'][0]['username']['S'],
             'valid': '1'
         })
     else:
-        return Response({'message': 'Utilizador não reconhecido', 'valid': '0'}, status=401)
+        return Response({'message': 'Utilizador não reconhecido.', 'valid': '0'}, status=401)
     
 
 
@@ -123,12 +125,14 @@ def loan_simulator(request):
             return Response("Erro na simulação.", status=status.HTTP_400_BAD_REQUEST)
         
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Home(request):
     serializer = LoanSerializer(data=request.data)
-    conn = pymysql.connect(host=rds_proxy_host, user=user_name, passwd=password, db=db_name, connect_timeout=30)
 
+    # conexão à base de dados RDS
+    conn = pymysql.connect(host=rds_proxy_host, user=user_name, passwd=password, db=db_name, connect_timeout=30)
 
     if serializer.is_valid():
 
@@ -141,27 +145,73 @@ def Home(request):
             documentos = serializer.validated_data.get('documentos'),
             tiposempr = serializer.validated_data.get('tiposempr'),
             estado = serializer.validated_data.get('estado'))
+        
         emprest.save()
+
         user = serializer.validated_data['user']
         valor = serializer.validated_data['valor']
         duracao = serializer.validated_data['duracao']
         salario = serializer.validated_data.get('salario')
+
         with conn:
             with conn.cursor() as cursor:
                 
+                # obter o id do empréstimo que foi adicionado
                 sql = "SELECT MAX(id) AS ultimo_id FROM `api_emprestimo`"   
                 cursor.execute(sql)
                 result = cursor.fetchone()[0]
 
             input = f'{{"id": "{result}", "user": "{user}","valor": "{int(valor)}","duracao": "{int(duracao)}","salario": "{int(salario)}"}}'
             
+        # iniciar o workflow
         stepfunction.start_execution(stateMachineArn = state_machine_arn,input = input)
 
         return Response(status=status.HTTP_200_OK)
     
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
+
+# estado dos empréstimos do cliente
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def loan_status(request):
+     
+    username = request.GET.get('username')
+
+    if not username:
+        return Response({"message": "O campo 'username' é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
+
+    emprestimos = emprestimo.objects.filter(user=username)
+
+    if not emprestimos.exists():
+        return Response({"message": "Não foram encontrados empréstimos para este utilizador."}, status=status.HTTP_404_NOT_FOUND)
+    
+    tipos_empr = {"CHAB":"Crédito Habitacional",
+                  "CAUT":"Crédito Automotivo",
+                  "CEST":"Crédito Estudantil",
+                  "CPES":"Crédito Pessoal"}
+
+    emprestimo_data = [
+        {
+            "valor": emprest.valor,
+            "duracao": emprest.duracao,
+            "salario": emprest.salario,
+            "profissao" : emprest.profissao,
+            "tiposempr": tipos_empr[emprest.tiposempr],  
+            "tempo": emprest.tempo, 
+            "estado": emprest.estado,
+        }
+        for emprest in emprestimos
+    ]
+
+    return Response({
+        "message": f"Você possui {len(emprestimo_data)} pedido(s) de empréstimo(s).","emprestimos": emprestimo_data}, status=status.HTTP_200_OK)
+
+
+
+##### Views para o frontend dos funcionários do banco #####
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -172,6 +222,7 @@ def BankLogin(request):
     username = request.data['username']
     password = request.data['password']
 
+    # procurar utilizador na base de dados
     user = dynamodb.query(
         TableName="funcionarios",
         KeyConditionExpression="username = :username",
@@ -179,9 +230,9 @@ def BankLogin(request):
         ExpressionAttributeValues={':username':{'S': username}, ':password': {'S': password}}
     )
     
-    # Criar tokens
     if user['Items'] != []:
 
+        # Criar tokens
         refresh = RefreshToken()
         refresh["user_id"] = int(user['Items'][0]['id']['N'])
         refresh["username"] = user['Items'][0]['username']['S']
@@ -202,49 +253,22 @@ def BankLogin(request):
     else:
         return Response({'message': 'Invalid username or password', 'valid': '0'}, status=401)
 
-    
-
-# estado do empréstimo
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def loan_status(request):
-     
-    username = request.GET.get('username')
-
-    if not username:
-            return Response({"message": "O campo 'username' é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
-
-    emprestimos = emprestimo.objects.filter(user=username)
-    print(emprestimos)
-
-    if not emprestimos.exists():
-        return Response({"message": "Não foram encontrados empréstimos para este utilizador."}, status=status.HTTP_404_NOT_FOUND)
-
-    emprestimo_data = [
-        {
-            "valor": emprest.valor,
-            "duracao": emprest.duracao,
-            "salario": emprest.salario,
-            "profissao" : emprest.profissao,
-            "tiposempr": emprest.tiposempr,  
-            "tempo": emprest.tempo, 
-            "estado": emprest.estado,
-        }
-        for emprest in emprestimos
-    ]
-
-    return Response({
-        "message": f"Você possui {len(emprestimo_data)} empréstimo(s) em processamento.","emprestimos": emprestimo_data}, status=status.HTTP_200_OK)
 
 
 # acesso ao estado de todos os empréstimos
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def loan_status_funcionarios(request):
+
     emprestimos = emprestimo.objects.all()
 
     if not emprestimos:
         return Response({"message": "Não foram encontrados empréstimos de clientes."}, status=status.HTTP_404_NOT_FOUND)
+    
+    tipos_empr = {"CHAB":"Crédito Habitacional",
+                  "CAUT":"Crédito Automotivo",
+                  "CEST":"Crédito Estudantil",
+                  "CPES":"Crédito Pessoal"}
 
     emprestimo_data = [
         {
@@ -253,7 +277,7 @@ def loan_status_funcionarios(request):
             "duracao": emprest.duracao,
             "salario": emprest.salario,
             "profissao": emprest.profissao,
-            "tiposempr": emprest.tiposempr,  
+            "tiposempr": tipos_empr[emprest.tiposempr],  
             "estado": emprest.estado,
         }
         for emprest in emprestimos
@@ -262,6 +286,7 @@ def loan_status_funcionarios(request):
     return Response({
         "message": f"Existe(m) {len(emprestimo_data)} empréstimo(s) registado(s) no sistema.", "emprestimos": emprestimo_data},
         status=status.HTTP_200_OK)
+
 
 
 # atualizar o estado e a decisão do emprestimo dos clientes

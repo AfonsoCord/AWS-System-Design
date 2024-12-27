@@ -15,7 +15,7 @@ function LoanForm({ route }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError("");  // Resetando o erro ao tentar submeter
+        setError("");
 
         if (localStorage.getItem(ACCESS_TOKEN)) {
             return navigate("/Home");  // Navega para Home se já estiver autenticado

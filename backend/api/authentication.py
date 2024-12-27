@@ -12,7 +12,7 @@ class CustomUser:
         return f"<CustomUser id={self.id}, username={self.username}>"
 
 
-class CustomJWTAuthentication(JWTAuthentication):
+class JWTAuthentication(JWTAuthentication):
 
     def get_user(self, validated_token):
         from .views import dynamodb # Importar o dynamodb

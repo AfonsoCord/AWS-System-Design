@@ -21,7 +21,7 @@ function Home() {
             <button className="logout" onClick={handleLogout}>Logout</button>
             <br/>
             <br/>
-            <button className="logout" onClick={handleLoanStatus}>Estados dos empréstimos do cliente</button> 
+            <button className="logout" onClick={handleLoanStatus}>Estados dos empréstimos dos clientes</button> 
         </div>
     );
 }

@@ -1,6 +1,3 @@
-/*import { useState, useEffect } from "react";
-import api from "./api";
-import Note from "./components/Note"*/
 import "../styles/Home.css"
 import {USERNAME} from "../constants";
 import Loan from "../components/Empréstimo";
@@ -15,7 +12,7 @@ function Home() {
         navigate("/login");
     };
 
-    const handleEstado = () => {
+    const handleEstado = () => { //ver estado dos empréstimos submetidos
         navigate("/loan_status");
     };
 
@@ -24,8 +21,8 @@ function Home() {
             <button className="logout" onClick={handleLogout}>Logout</button>
             <br/>
             <br/>
-            <button className="logout" onClick={handleEstado}>Ver estado dos seus empréstimos</button>
-            <Loan route="/Home/" method="Home" />
+            <button className="logout" onClick={handleEstado}>Ver o estado dos seus empréstimos</button>
+            <Loan route="/Home/" method="Home"/>
            </div>
 
 }
