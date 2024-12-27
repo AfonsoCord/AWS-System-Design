@@ -55,6 +55,7 @@ function LoanForm({ route }) {
     return (
         <form onSubmit={handleSubmit} className="form-container">
             <h1>Simulador do Empréstimo</h1>
+            <p className="form-indications">Quantia (€):</p>
             <input
                 className="form-input"
                 type="number"
@@ -63,6 +64,7 @@ function LoanForm({ route }) {
                 placeholder="Quantia do empréstimo"
                 required
             />
+            <p className="form-indications">Duração (meses):</p>
             <input
                 className="form-input"
                 type="number"

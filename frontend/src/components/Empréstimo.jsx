@@ -68,7 +68,8 @@ function Loan({ route }) {
 
     return (
         <form onSubmit={handleSubmit} className="form-container">
-            <h1>Página do Empréstimo</h1>
+            <h1>Pedido de Empréstimo</h1>
+            <p className="form-indications">Quantia (€):</p>
             <input
                 className="form-input"
                 type="number"
@@ -77,6 +78,7 @@ function Loan({ route }) {
                 placeholder="Quantia do empréstimo"
                 required
             />
+            <p className="form-indications">Duração (meses):</p>
             <input
                 className="form-input"
                 type="number"
@@ -85,6 +87,7 @@ function Loan({ route }) {
                 placeholder="Duração do empréstimo"
                 required
             />
+            <p className="form-indications">Salário (€):</p>
             <input
                 className="form-input"
                 type="number"
@@ -93,6 +96,7 @@ function Loan({ route }) {
                 placeholder="Insira o seu salário mensal"
                 required
             />
+            <p className="form-indications">Profissão:</p>
             <input
                 className="form-input"
                 type="text"
@@ -101,6 +105,7 @@ function Loan({ route }) {
                 placeholder="Insira a sua profissão"
                 required
             />
+            <p className="form-indications">Anexar documentos:</p>
             <input
                 className="form-input"
                 type="file"
@@ -108,13 +113,14 @@ function Loan({ route }) {
                 accept="image/*"
                 required
             />
+            <p className="form-indications">Tipo de empréstimo:</p>
             <select
                 className="form-input"
                 value={tiposempr}
                 onChange={(e) => settiposempr(e.target.value)}
                 required
             >
-                <option value="">Selecione o Tipo de Empréstimo</option>
+                <option value="">Selecione o Tipo de empréstimo</option>
                 <option value="CHAB">Crédito Habitacional</option>
                 <option value="CAUT">Crédito Automotivo</option>
                 <option value="CEST">Crédito Estudantil</option>
