@@ -1,5 +1,6 @@
 from django.db import models
 
+# base de dados dos clientes
 class emprestimo(models.Model):
     user = models.CharField(max_length=100)
     categories = (("CHAB","Crédito Habitacional"),
@@ -16,13 +17,14 @@ class emprestimo(models.Model):
     estado = models.CharField(max_length=100)
     creditscore = models.CharField(max_length=100, null=True, blank=True)
     decisao = models.CharField(max_length=100, null=True, blank=True)
+    horario = models.CharField(max_length=100,null=True, blank=True)
 
 
     def __str__(self):
 
         return self.user
     
-
+# base de dados dos funcionário
 class horario(models.Model):
     horario = models.CharField(max_length=100)
     id_emprestimo = models.PositiveIntegerField()
