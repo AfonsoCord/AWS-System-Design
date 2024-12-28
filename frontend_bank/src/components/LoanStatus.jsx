@@ -234,7 +234,11 @@ function LoanStatus() {
                                     </div>
                                     )}
                                 </div>
-                                ) : loan.decisao == "requer entrevista" ? (
+                                ) : loan.decisao == "requer entrevista" && loan.estado != "agendado" ? (
+                                    <div>
+                                        <strong>Decisão:</strong> Requer entrevista (aguarda escolha do horário)
+                                    </div>
+                                ) : loan.decisao == "requer entrevista" && loan.estado == "agendado" ? (
                                     <div>
                                         <strong>Decisão:</strong> Requer entrevista
                                         <label>
@@ -261,6 +265,8 @@ function LoanStatus() {
                                         >
                                             Submeter Decisão Final
                                         </button>
+                                        <br />
+                                        <strong>Horário:</strong> {loan.hora}
                                     </div>
                                 ) : (
                                     <p><strong>Decisão:</strong> {loan.decisao}</p>

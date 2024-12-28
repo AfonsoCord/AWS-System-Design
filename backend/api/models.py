@@ -24,7 +24,7 @@ class emprestimo(models.Model):
 
         return self.user
     
-# base de dados dos funcionário
+# base de dados dos horários de entrevista
 class horario(models.Model):
     horario = models.CharField(max_length=100)
     id_emprestimo = models.PositiveIntegerField()
@@ -33,4 +33,4 @@ class horario(models.Model):
     
     def __str__(self):
 
-        return f"{self.horario}, empréstimo nº {str(self.id_emprestimo)} e selecionou entrevista dia {self.cliente_selecionou})"
+        return f"{self.horario}, empréstimo nº {str(self.id_emprestimo)}"

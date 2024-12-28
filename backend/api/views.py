@@ -279,6 +279,7 @@ def loan_status_funcionarios(request):
             "estado": emprest.estado,
             "creditscore": emprest.creditscore,
             "decisao": emprest.decisao,
+            "hora": emprest.horario
         }
         for emprest in emprestimos
     ]
@@ -361,7 +362,7 @@ def escolher_horario(request):
             horario_selecionado.cliente_selecionou = True
             horario_selecionado.save()
 
-            # Atualiza o estado e o horário no registro do cliente
+            # Atualiza o estado e o horário no registo do cliente
             emp.horario = horario_escolhido
             emp.estado = "agendado"
             emp.save()

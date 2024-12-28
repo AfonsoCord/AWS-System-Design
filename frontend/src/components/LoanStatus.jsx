@@ -132,7 +132,7 @@ function LoanStatus() {
                                             <button
                                                 onClick={() => handleSubmitHorario(loan.id)}
                                                 className="form-button"
-                                                style={{ marginTop: "10px" }}
+                                                style={{ marginTop: "10px", width: "10%"}}
                                             >
                                                 Confirmar horário
                                             </button>
