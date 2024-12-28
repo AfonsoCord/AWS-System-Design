@@ -199,7 +199,7 @@ def loan_status(request):
             "tempo": emprest.tempo, 
             "estado": emprest.estado,
             "decisao": emprest.decisao,
-            "horarios": list(horario.objects.filter(id_emprestimo=emprest.id).values_list('horario', flat=True))
+            "horarios": list(horario.objects.filter(id_emprestimo=emprest.id).values_list('horario', flat=True)) #lista dos horários
         }
         for emprest in emprestimos
     ]
