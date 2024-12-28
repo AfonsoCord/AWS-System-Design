@@ -62,10 +62,10 @@ function LoanStatus() {
         try {
             const response = await api.post(
                 "/escolher_horario/",
-                { id: loanId, horarios: horario },
+                { "id": loanId, "horario": horario },
                 {
                     headers: { Authorization: `Bearer ${token}` },
-                    "Content-Type": "application/json",
+                    "Content-Type": "multipart/form-data",
                 }
             );
             alert(response.data.message);
@@ -113,10 +113,10 @@ function LoanStatus() {
                                     {loan.decisao && <p><strong>Decisão:</strong> {loan.decisao}</p>}
 
 
-                                    {/* os horários apenas se a decisão= "requer entrevista" */}
-                                    {loan.decisao === "requer entrevista" && loan.horarios && loan.horarios.length > 0 && (
+                                    {/* os horários apenas com a decisão "requer entrevista" */}
+                                    {loan.decisao === "requer entrevista" && loan.horarios && loan.horarios.length > 0 && loan.hora === null && (
                                         <div>
-                                            <p><strong>Horários disponíveis para seleção:</strong></p>
+                                            <p><strong>Horários disponíveis para realizar entrevista:</strong></p>
                                             {loan.horarios.map((horario, idx) => (
                                                 <label key={idx} style={{ display: "block", marginBottom: "5px" }}>
                                                     <input
@@ -136,6 +136,11 @@ function LoanStatus() {
                                             >
                                                 Confirmar horário
                                             </button>
+                                        </div>
+                                    )}
+                                    {loan.decisao === "requer entrevista" && loan.hora && (
+                                        <div>
+                                            <p><strong>Horário da entrevista:</strong> {loan.hora}</p>
                                         </div>
                                     )}
                                 </div>

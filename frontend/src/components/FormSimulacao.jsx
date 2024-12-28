@@ -18,6 +18,8 @@ function LoanForm({ route }) {
         setError("");
 
         if (localStorage.getItem(ACCESS_TOKEN)) {
+            localStorage.setItem(DURACAO, duracao),
+            localStorage.setItem(VALOR, valor);
             return navigate("/Home");  // Navega para Home se já estiver autenticado
         }
 

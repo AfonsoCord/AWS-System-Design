@@ -191,6 +191,7 @@ def loan_status(request):
 
     emprestimo_data = [
         {
+            "id": emprest.id,
             "valor": emprest.valor,
             "duracao": emprest.duracao,
             "salario": emprest.salario,
@@ -199,7 +200,8 @@ def loan_status(request):
             "tempo": emprest.tempo, 
             "estado": emprest.estado,
             "decisao": emprest.decisao,
-            "horarios": list(horario.objects.filter(id_emprestimo=emprest.id).values_list('horario', flat=True)) #lista dos horários
+            "horarios": list(horario.objects.filter(id_emprestimo=emprest.id).values_list('horario', flat=True)), #lista dos horários
+            "hora": emprest.horario
         }
         for emprest in emprestimos
     ]
@@ -276,7 +278,7 @@ def loan_status_funcionarios(request):
             "tiposempr": tipos_empr[emprest.tiposempr],  
             "estado": emprest.estado,
             "creditscore": emprest.creditscore,
-            "decisao": emprest.decisao
+            "decisao": emprest.decisao,
         }
         for emprest in emprestimos
     ]
@@ -333,18 +335,17 @@ def decision(request):
 def escolher_horario(request):
 
     id = request.data.get('id')
-    print(id)
+
     try:
         
         emp = emprestimo.objects.get(id=id)
-        print(id)
 
         if emp:
             
             if emp.decisao != "requer entrevista":
                 return Response({"message": "Este empréstimo não requer entrevista."}, status=status.HTTP_400_BAD_REQUEST)
 
-            horario_escolhido = request.data.get('horarios')
+            horario_escolhido = request.data.get('horario')
             if not horario_escolhido:
                 return Response({"message": "Por favor, selecione um horário válido."}, status=status.HTTP_400_BAD_REQUEST)
 
