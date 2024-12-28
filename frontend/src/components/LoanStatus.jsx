@@ -65,6 +65,7 @@ function LoanStatus() {
                 { id: loanId, horarios: horario },
                 {
                     headers: { Authorization: `Bearer ${token}` },
+                    "Content-Type": "application/json",
                 }
             );
             alert(response.data.message);
@@ -112,7 +113,7 @@ function LoanStatus() {
                                     {loan.decisao && <p><strong>Decisão:</strong> {loan.decisao}</p>}
 
 
-                                    {/* Renderizar os horários apenas se a decisão for "requer entrevista" */}
+                                    {/* os horários apenas se a decisão= "requer entrevista" */}
                                     {loan.decisao === "requer entrevista" && loan.horarios && loan.horarios.length > 0 && (
                                         <div>
                                             <p><strong>Horários disponíveis para seleção:</strong></p>
