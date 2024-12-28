@@ -22,9 +22,9 @@ db_name = 'emprestimos'
 
 state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
 
-aws_access_key_id="ASIAYS2NSE42IITZHICQ"
-aws_secret_access_key="IaUzGpm5gd3aJk/t6MhB7PC9Rhr9ZZLrBxR43cEE"
-aws_session_token="IQoJb3JpZ2luX2VjEIX//////////wEaCXVzLXdlc3QtMiJIMEYCIQCx+iLLIXQKcYAl+GPdci3gfxpVN4FWYcxZuZRmgblQBgIhAJvtBBMxYHXImxWtPT/bVHhELc8smsjX4h2v7g/anXAAKrQCCF4QABoMNTkwMTgzODAyNjc2IgyjVUj6MZ1d+2CyO38qkQImw+GCst9rzlT0hV4X7UeZIXuQbmBqLuggn4StEEgAo7H0MplV2garKLeNvOUB4RDVehO3LnMf9cwTbwQN18KiD1O86LYqJP4VgC8ZQvwqGYrdtImwHy+tH/sgkQedlz7Oz2XFeRuSMVV+xxGJqGikuCecxfigLA2AFUg80GvXRjfNlfD44DUPHyXSct8LN651EHGrY5sXJUA+R9bxGg9VzYSwKcJMIaM1ILiQIieq/ndcyVnmTzPeDNU2TN7xyO5OOFnCeKt2yUvH1ehAHioz4GHf/SC1XuXr23abZS0/7jCCl1WDkI7EUyPdc3tNjBW+Bwtt4QxbNDgNPibK4ihkhqwNnOw4z42IZYmKE0RVEVsw7t6/uwY6nAH+QkaoWMjk+904wYtqqQRLOyAzU/H7wD1HDf2QBTH7ILig+I6Nj0HRsjl/t1iySY7G/YGHEvWv9hw7juznE+miPY0MnhDWBcje4jH+e7+9Wa964aQTuQi2wEEX/yr599w7U/8ratzIsIIgNSEInHEbW/oJwn3wx1NmEWzWtxzZsWVrzeiJH6+3UA2+M2+GnSI40ACAry7N90tJ7Pk="
+aws_access_key_id="ASIAYS2NSE42IORVIK2S"
+aws_secret_access_key="jJOW9bJDxCxkbVGlK+PnNnWsSdmOoawh+Z93XMf8"
+aws_session_token="IQoJb3JpZ2luX2VjEIn//////////wEaCXVzLXdlc3QtMiJHMEUCIQDksWizgUZGHSCQX8mqW/cZGjMTb5v4wEJ/ridsHS8iQwIgLNxqmc5Qbx/CfXyE2U5/nTj3lmaQ/Fb4YFvRZovqVNAqtAIIYhAAGgw1OTAxODM4MDI2NzYiDOeIADxny3t9YU+9XiqRAqX1eB3MWPpMnJOExcI4ADygkRQqN+Y+Gg5o9pqE6nKWU7tSvReyzYwwKldqsjEkL+cHfJcClqPjSPkpQbI9I9TZUkgTMnTcaJspfwv5CGCJifRgabS2pwk0/02OBvIRflogazu3xcWnbd+3RRTnJtGBqjts8z9Efo3Mmh1LQ0H/dV+lfs7+Zhjsse41hVbusAL2UmIG+dDyRrBZaAZqJK1FgVcMu54NAbFlwA5PUqDnnzH6WGSVElr06Nq5n3PHrQZQbnoSL35cQ9oAEsLb/TV2AnAyL3cpuKfE5gjj4CpcMGNQKPINJJg/qOUmoEv2orJwpB/pkM4wv8HucyyFHk1SlgGGaVnk5UBPLVgsiy2sujDF0MC7BjqdAVvMvri2tUXeVXU/jwWVIGLtBDLoxDcoLo4c3QqVpp8Xy7ORZn+IH3cb6jzddhGCGXnFzo50z93xAAOmMcj83dp3nU2BL45HeGh+f6SU51fC0qQTvQnEhkDVdAsUkAJPzIir2m6oxyp6S93fQAzd0YhB3nhLmcrMEZ7BtXma1ouizb7QQHY9+wRTuBH6dTveZvWDzcbqb14VBw2kzAg="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -331,9 +331,13 @@ def decision(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def escolher_horario(request):
+
+    id = request.data.get('id')
+    print(id)
     try:
         
-        emp = emprestimo.objects.get(id=request.data.get('id'))
+        emp = emprestimo.objects.get(id=id)
+        print(id)
 
         if emp:
             
