@@ -26,8 +26,9 @@ class emprestimo(models.Model):
 class horario(models.Model):
     horario = models.CharField(max_length=100)
     id_emprestimo = models.PositiveIntegerField()
+    cliente_selecionou = models.BooleanField(default=False)
 
     
     def __str__(self):
 
-        return f"{self.horario}, empréstimo nº {str(self.id_emprestimo)}"
+        return f"{self.horario}, empréstimo nº {str(self.id_emprestimo)} e selecionou entrevista dia {self.cliente_selecionou})"

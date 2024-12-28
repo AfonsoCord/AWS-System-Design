@@ -22,9 +22,9 @@ db_name = 'emprestimos'
 
 state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
 
-aws_access_key_id="ASIAYS2NSE42AAETB36W"
-aws_secret_access_key="zoDIa/D1x4cGV4BSTtvYhicuiK03TCgUQU/JJD3F"
-aws_session_token="IQoJb3JpZ2luX2VjEHYaCXVzLXdlc3QtMiJHMEUCIBJPVr1SQuG5bZdyz0+WCvMnI6ml0x2zg7rR3Cm6bUb2AiEAxn9uhJScTuFj65y5DtM9tCZwBz8/st+Qy2DE/0R6yrsqtAIITxAAGgw1OTAxODM4MDI2NzYiDBu7TlV9n0eI0vCo0SqRAgD3RjvrLAyKxyu0xSLvqAtwYWXVX/BBB2JfN1RzjVZjCR46mg183sgYjCMhxk+XT6UvngknSb7r/ZYPj2Os1D7tCe6OKShRnE0QMG5Aog+keSzMn/WCc+BTFEZ+EeAwQMIgIoZcTQASdix0Wt/JwUwHR5epPUEnCkMk4CjJPLF1fq3bsKVuFUg6EsIMMraaVUPtHcPiu8uh9ufv0+PlDa9GGreLbbCn0BZp4Yo5FiASJYDQUWcRj8oOQZJEbFgs8Nxrq7PEPPIiL+GebH1fknLMwwq1wi6lv+qopm5f9M5VgCw6QWt50tgUKegO7G+wGP2WsT92tGbHojTeZu+DtQeMOmJp8xvRWQvbfWx1a/K/QjCIzby7BjqdAW3ua2in8oK3K75poeEwdf84iCo3bwcgVso5O5/lgxRs5h6/oFo8MhFWsMlj1rvc5RjQAL3ljM+hm0kXgOaXeY02vugTw8nwoBqGqJZbdtHPB3oYV7+QSRO/RxQbb3Tboi4A6QAdHy9aaQeMs9Msp2sWqyUyr7+RSJ59Nlx/mggy8nfKwQMtP5Z7Xyj8D6p0EBQCCwJKfnf+vhh49t0="
+aws_access_key_id="ASIAYS2NSE42NN2VOGHB"
+aws_secret_access_key="w6ZdVZBWiKKairyj1lCzmJEi/ecgVawLkrGcJ+1e"
+aws_session_token="IQoJb3JpZ2luX2VjEHoaCXVzLXdlc3QtMiJGMEQCICUHit8Z++pJHEDHymvGCVwLM0Is4YK5+89jKfjIzJsyAiA2dkRKVy6n/ti9QlkActKYTSwuDfSaC9h8yTfMV58oLSq0AghTEAAaDDU5MDE4MzgwMjY3NiIMxRoYmastQ9HKbHHyKpEC9KW1HXAJGmo1AeMjaEUyqwWSnT8bcYY/wiEMwv62bNqc+FxINQU5BmuMUu0qJpFOFcp5bAHJbncORjZPjGujkk3YC23bl7FnJpGj9pkWuCegqQiF8VCp9igMzDTlNXL9eyzBLpAbFCKhxTeVyx3zTb0uTvOqKaeKihokzFWbHH8PstAYIMPw70hltpxBdF41x3GwyEJcuV/lnEd0V28AhzKCIUWEmp4SUWqJ08A9Q+1f2/47bg1HE5h7sqKwtSbEzN6FCK/nzXe4/Fv9XGW0TUWOzd5ESBe8mj/NveaQfRRxtFoJx50s5mRWHg0+WUvIjUSzjRuqvG8HYE86amKpv8K3+ibsw89PlWMVDVv8MEKXMJm+vbsGOp4Bt5tIINF8sk2Vv1M57hZG5gsucvKagfEzdCdhhGf0pxgg8RYAU1YDOWWYH7Z2kE4TadbWuQOwN1/3UMdWl6eA/TIST75I2g555L/SGAQoWs36kmdEPRpcPQY0/UadGe/JzcY2bnUVu1QLkFMeZR1+P82jlH0YWtvWn4XOcgeF4D9eN62Nr26RLeep1aRJlszEQ4z8FkoLWlKkIDwgtjM="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -321,3 +321,39 @@ def decision(request):
     
     except Exception as e:
         return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+# atualiza o horario da entrevista
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def horario(request):
+    try:
+        emp = emprestimo.objects.get(id=request.data.get('id'))
+
+        if emp:
+            if emp.decisao != "requer entrevista":
+                return Response({"message": "Este empréstimo não requer entrevista."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # obtem os o horario na base de dados
+            horarios = request.data.get('horarios').split(",")
+
+            if horarios != [""]:
+                for hora in horarios:
+                    
+                    horario_selecionado = horario.objects.filter(horario=hora, emprestimo=emp).first()
+                    if not horario_selecionado:
+                        return Response({"message": f"O horário '{hora}' não foi atribuído pelo funcionário, aguarde."},status=status.HTTP_404_NOT_FOUND)
+
+
+                    emp.horario_selecionado.cliente_selecionou = True
+                    horario_selecionado.save()
+
+            #atualiza o estado do empréstimo
+            emp.estado = "agendado."
+            emp.save
+
+
+            return Response({"message": "Horário selecionado com sucesso."}, status=status.HTTP_200_OK)
+    
+    except emp.DoesNotExist:
+        return Response({"message": "Empréstimo não encontrado."}, status=status.HTTP_404_NOT_FOUND)

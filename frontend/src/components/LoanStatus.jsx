@@ -5,6 +5,8 @@ import { ACCESS_TOKEN, USERNAME } from "../constants";
 
 function LoanStatus() {
     const [loans, setLoans] = useState([]);
+    const [horarios, setHorarios] = useState({}); //horarios selecionados pelo funcionário
+    const [selectedHorarios, setSelectedHorarios] = useState({}); // horário escolhido pelo cliente
     const [error, setError] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
