@@ -327,37 +327,42 @@ def decision(request):
     
 
 
-# atualiza o horario da entrevista
+# atualiza o horário selecionado pelo cliente
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def escolher_horario(request):
     try:
+        
         emp = emprestimo.objects.get(id=request.data.get('id'))
 
         if emp:
+            
             if emp.decisao != "requer entrevista":
                 return Response({"message": "Este empréstimo não requer entrevista."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # obtem os o horario na base de dados
-            horarios = request.data.get('horarios').split(",")
+            horario_escolhido = request.data.get('horarios')
+            if not horario_escolhido:
+                return Response({"message": "Por favor, selecione um horário válido."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if horarios != [""]:
-                for hora in horarios:
-                    
-                    horario_selecionado = horario.objects.filter(horario=hora, emprestimo=emp).first()
-                    if not horario_selecionado:
-                        return Response({"message": f"O horário '{hora}' não foi atribuído pelo funcionário, aguarde."},status=status.HTTP_404_NOT_FOUND)
+            # funcionario
+            horario_selecionado = horario.objects.filter(
+                horario=horario_escolhido, 
+                id_emprestimo=emp.id).first()
 
+            if not horario_selecionado:
+                return Response({"message": f"O horário '{horario_escolhido}' não está disponível, aguarde."}, status=status.HTTP_404_NOT_FOUND)
 
-                    emp.horario_selecionado.cliente_selecionou = True
-                    horario_selecionado.save()
+            
+            horario_selecionado.cliente_selecionou = True
+            horario_selecionado.save()
 
-            #atualiza o estado do empréstimo
-            emp.estado = "agendado."
-            emp.save
-
+            # Atualiza o estado e o horário no registro do cliente
+            emp.horario = horario_escolhido
+            emp.estado = "agendado"
+            emp.save()
 
             return Response({"message": "Horário selecionado com sucesso."}, status=status.HTTP_200_OK)
-    
-    except emp.DoesNotExist:
-        return Response({"message": "Empréstimo não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    except emprestimo.DoesNotExist:
+        return Response(
+            {"message": "Empréstimo não encontrado."}, status=status.HTTP_404_NOT_FOUND)

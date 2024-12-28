@@ -110,9 +110,35 @@ function LoanStatus() {
                                     <p><strong>Duração:</strong> {loan.duracao} meses</p>
                                     <p><strong>Estado:</strong> {loan.estado}</p>
                                     {loan.decisao && <p><strong>Decisão:</strong> {loan.decisao}</p>}
+
+
+                                    {/* Renderizar os horários apenas se a decisão for "requer entrevista" */}
+                                    {loan.decisao === "requer entrevista" && loan.horarios && loan.horarios.length > 0 && (
+                                        <div>
+                                            <p><strong>Horários disponíveis para seleção:</strong></p>
+                                            {loan.horarios.map((horario, idx) => (
+                                                <label key={idx} style={{ display: "block", marginBottom: "5px" }}>
+                                                    <input
+                                                        type="radio"
+                                                        name={`horario-${loan.id}`}
+                                                        value={horario}
+                                                        checked={selectedHorarios[loan.id] === horario}
+                                                        onChange={() => handleHorarioChange(loan.id, horario)}
+                                                    />
+                                                    {horario}
+                                                </label>
+                                            ))}
+                                            <button
+                                                onClick={() => handleSubmitHorario(loan.id)}
+                                                className="form-button"
+                                                style={{ marginTop: "10px" }}
+                                            >
+                                                Confirmar horário
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
-                            {}
                             <div style={{ marginTop: "20px" }}>
                                 <button
                                     onClick={() => navigate("/Home")}
