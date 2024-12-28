@@ -228,6 +228,34 @@ function LoanStatus() {
                                     </div>
                                     )}
                                 </div>
+                                ) : loan.decisao == "requer entrevista" ? (
+                                    <div>
+                                        <strong>Decisão:</strong> Requer entrevista
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name={`decision-${index}`}
+                                                checked={loanDecisions[index] === 'aprovado'}
+                                                onChange={() => handleSelectDecision(index, 'aprovado')}
+                                            />
+                                            <strong>Aprovar</strong>
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name={`decision-${index}`}
+                                                checked={loanDecisions[index] === 'rejeitado'}
+                                                onChange={() => handleSelectDecision(index, 'rejeitado')}
+                                            />
+                                            <strong>Rejeitar</strong>
+                                        </label>
+                                        <button
+                                            className="form-final-button"
+                                            onClick={() => handleSubmit(index, loan.id)}
+                                        >
+                                            Submeter Decisão Final
+                                        </button>
+                                    </div>
                                 ) : (
                                     <p><strong>Decisão:</strong> {loan.decisao}</p>
                                 )}

@@ -1,5 +1,5 @@
   .form-button {
-    width: 10%;
+    width: 12%;
     padding: 10px;
     margin: 0 0 0 20px;
     background-color: #007bff;
@@ -12,4 +12,20 @@
   
   .form-button:hover {
     background-color: #0056b3;
+  }
+
+  .form-final-button {
+    width: 12%;
+    padding: 10px;
+    margin: 0 0 0 20px;
+    background-color: #0d00ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .form-final-button:hover {
+    background-color: #0900b3;
   }
