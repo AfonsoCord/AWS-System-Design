@@ -6,6 +6,8 @@ import "../styles/LoanStatus.css";
 function LoanStatus() {
     const [loans, setLoans] = useState([]);
     const [loanDecisions, setLoanDecisions] = useState({});
+    const [schedules, setSchedules] = useState([])
+
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
@@ -43,7 +45,8 @@ function LoanStatus() {
         fetchLoanStatus();
     }, []);
 
-        
+    
+    // guardar a decisão selecionada
     const handleSelectDecision = (index, decision) => {
         setLoanDecisions((prevDecisions) => ({
             ...prevDecisions,
@@ -52,10 +55,16 @@ function LoanStatus() {
     };
 
 
+    // enviar para o backend a decisão, estado e horários em caso de entrevista
     const handleSubmit = async (index, id) => {
         const decision = loanDecisions[index];
         if (!decision) {
             alert("Por favor, selecione uma decisão antes de submeter.");
+            return;
+        }
+        
+        if (schedules.length === 0 && decision === "requer entrevista") {
+            alert("Por favor, selecione os possíveis horários para a entrevista antes de submeter.");
             return;
         }
 
@@ -70,6 +79,7 @@ function LoanStatus() {
         formData.append("decisao", decision);
         formData.append("id", id);
         formData.append("estado", estado)
+        formData.append("horarios", schedules)
 
         try {
             const res = await api.post('/decision/', formData, {
@@ -84,6 +94,22 @@ function LoanStatus() {
         } catch (error) {
             console.error(error.message);
             alert(error.response?.data?.message || "Ocorreu um erro.");
+        }
+    };
+
+
+    // guardar os horários selecionados
+    const handleCheckboxChange = (e) => {
+        const { value, checked } = e.target;
+        
+        if (checked) {
+            // adicionar o horário ao array de horários quando selecionar
+            setSchedules((prevSchedules) => [...prevSchedules, value]);
+        } else {
+            // remover o horário do array
+            setSchedules((prevSchedules) =>
+                prevSchedules.filter((schedule) => schedule !== value)
+            );
         }
     };
 
@@ -152,10 +178,55 @@ function LoanStatus() {
                                     <button
                                         className="form-button"
                                         onClick={() => handleSubmit(index, loan.id)}
-                                        //style={{ marginTop: "10px", padding: "5px 10px" }}
                                     >
                                         Submeter Decisão
                                     </button>
+
+                                    {loanDecisions[index] === "requer entrevista" && (
+                                    <div>
+                                        <br />
+                                        <p>Selecione possíveis horários para a entrevista:</p>
+                                        <label>
+                                            <input 
+                                                type="checkbox" 
+                                                value="10/01/2025 10:00" 
+                                                checked={schedules.includes("10/01/2025 10:00")}
+                                                onChange={(e) => handleCheckboxChange(e)}
+                                            />
+                                            10/01/2025 10:00
+                                        </label>
+                                        <br />
+                                        <label>
+                                            <input 
+                                                type="checkbox" 
+                                                value="10/01/2025 11:00" 
+                                                checked={schedules.includes("10/01/2025 11:00")}
+                                                onChange={(e) => handleCheckboxChange(e)}
+                                            />
+                                            10/01/2025 11:00
+                                        </label>
+                                        <br />
+                                        <label>
+                                            <input 
+                                                type="checkbox" 
+                                                value="12/01/2025 11:00" 
+                                                checked={schedules.includes("12/01/2025 11:00")}
+                                                onChange={(e) => handleCheckboxChange(e)}
+                                            />
+                                            12/01/2025 11:00
+                                        </label>
+                                        <br />
+                                        <label>
+                                            <input 
+                                                type="checkbox" 
+                                                value="13/01/2025 16:00" 
+                                                checked={schedules.includes("13/01/2025 16:00")}
+                                                onChange={(e) => handleCheckboxChange(e)}
+                                            />
+                                            13/01/2025 16:00
+                                        </label>
+                                    </div>
+                                    )}
                                 </div>
                                 ) : (
                                     <p><strong>Decisão:</strong> {loan.decisao}</p>

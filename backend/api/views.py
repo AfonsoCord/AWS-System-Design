@@ -1,7 +1,7 @@
 from rest_framework import status
 from .serializers import LoginSerializer, LoanSerializer, BankLoginSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import emprestimo
+from .models import emprestimo, horario
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 import boto3
@@ -300,6 +300,20 @@ def decision(request):
             emp.estado = request.data.get('estado')
             emp.decisao = request.data.get('decisao')
             emp.save()
+
+            # guardar os horários da entrevista na base de dados
+            horarios = request.data.get('horarios').split(",")
+
+            if horarios != [""]:
+
+                for hora in horarios:
+                    h = horario(
+                        horario = hora,
+                        id_emprestimo = request.data.get('id')
+                    )
+                    
+                    h.save()
+
 
             return Response({"message": "Empréstimo atualizado com sucesso."}, status=status.HTTP_200_OK)
         else:

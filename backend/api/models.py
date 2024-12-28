@@ -21,3 +21,13 @@ class emprestimo(models.Model):
     def __str__(self):
 
         return self.user
+    
+
+class horario(models.Model):
+    horario = models.CharField(max_length=100)
+    id_emprestimo = models.PositiveIntegerField()
+
+    
+    def __str__(self):
+
+        return f"{self.horario}, empréstimo nº {str(self.id_emprestimo)}"
