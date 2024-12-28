@@ -5,8 +5,7 @@ import { ACCESS_TOKEN, USERNAME } from "../constants";
 
 function LoanStatus() {
     const [loans, setLoans] = useState([]);
-    const [horarios, setHorarios] = useState({}); //horarios selecionados pelo funcionário
-    const [selectedHorarios, setSelectedHorarios] = useState({}); // horário escolhido pelo cliente
+    const [selectedHorarios, setSelectedHorarios] = useState({}); // horario escolhido pelo cliente
     const [error, setError] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
@@ -43,6 +42,38 @@ function LoanStatus() {
 
         fetchLoanStatus();
     }, []);
+
+    const handleHorarioChange = (loanId, horario) => {
+        setSelectedHorarios((prev) => ({
+            ...prev,
+            [loanId]: horario,
+        }));
+    };
+
+    const handleSubmitHorario = async (loanId) => {
+        const token = localStorage.getItem(ACCESS_TOKEN);
+        const horario = selectedHorarios[loanId];
+
+        if (!horario) {
+            alert("Por favor, selecione um horário.");
+            return;
+        }
+
+        try {
+            const response = await api.post(
+                "/escolher_horario/",
+                { id: loanId, horarios: horario },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            alert(response.data.message);
+            window.location.reload();
+        } catch (err) {
+            console.error(err.message);
+            alert(err.response?.data?.message || "Erro ao selecionar horário.");
+        }
+    };
 
     return (
         <div>

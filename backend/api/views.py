@@ -183,7 +183,7 @@ def loan_status(request):
         return Response({"message": "O campo 'username' é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
 
     emprestimos = emprestimo.objects.filter(user=username)
-    
+
     tipos_empr = {"CHAB":"Crédito Habitacional",
                   "CAUT":"Crédito Automotivo",
                   "CEST":"Crédito Estudantil",
@@ -198,7 +198,8 @@ def loan_status(request):
             "tiposempr": tipos_empr[emprest.tiposempr],  
             "tempo": emprest.tempo, 
             "estado": emprest.estado,
-            "decisao": emprest.decisao
+            "decisao": emprest.decisao,
+            "horarios": list(horario.objects.filter(id_emprestimo=emprest.id).values_list('horario', flat=True))
         }
         for emprest in emprestimos
     ]
