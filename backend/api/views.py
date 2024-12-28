@@ -22,9 +22,9 @@ db_name = 'emprestimos'
 
 state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
 
-aws_access_key_id="ASIAYS2NSE42NN2VOGHB"
-aws_secret_access_key="w6ZdVZBWiKKairyj1lCzmJEi/ecgVawLkrGcJ+1e"
-aws_session_token="IQoJb3JpZ2luX2VjEHoaCXVzLXdlc3QtMiJGMEQCICUHit8Z++pJHEDHymvGCVwLM0Is4YK5+89jKfjIzJsyAiA2dkRKVy6n/ti9QlkActKYTSwuDfSaC9h8yTfMV58oLSq0AghTEAAaDDU5MDE4MzgwMjY3NiIMxRoYmastQ9HKbHHyKpEC9KW1HXAJGmo1AeMjaEUyqwWSnT8bcYY/wiEMwv62bNqc+FxINQU5BmuMUu0qJpFOFcp5bAHJbncORjZPjGujkk3YC23bl7FnJpGj9pkWuCegqQiF8VCp9igMzDTlNXL9eyzBLpAbFCKhxTeVyx3zTb0uTvOqKaeKihokzFWbHH8PstAYIMPw70hltpxBdF41x3GwyEJcuV/lnEd0V28AhzKCIUWEmp4SUWqJ08A9Q+1f2/47bg1HE5h7sqKwtSbEzN6FCK/nzXe4/Fv9XGW0TUWOzd5ESBe8mj/NveaQfRRxtFoJx50s5mRWHg0+WUvIjUSzjRuqvG8HYE86amKpv8K3+ibsw89PlWMVDVv8MEKXMJm+vbsGOp4Bt5tIINF8sk2Vv1M57hZG5gsucvKagfEzdCdhhGf0pxgg8RYAU1YDOWWYH7Z2kE4TadbWuQOwN1/3UMdWl6eA/TIST75I2g555L/SGAQoWs36kmdEPRpcPQY0/UadGe/JzcY2bnUVu1QLkFMeZR1+P82jlH0YWtvWn4XOcgeF4D9eN62Nr26RLeep1aRJlszEQ4z8FkoLWlKkIDwgtjM="
+aws_access_key_id="ASIAYS2NSE42IITZHICQ"
+aws_secret_access_key="IaUzGpm5gd3aJk/t6MhB7PC9Rhr9ZZLrBxR43cEE"
+aws_session_token="IQoJb3JpZ2luX2VjEIX//////////wEaCXVzLXdlc3QtMiJIMEYCIQCx+iLLIXQKcYAl+GPdci3gfxpVN4FWYcxZuZRmgblQBgIhAJvtBBMxYHXImxWtPT/bVHhELc8smsjX4h2v7g/anXAAKrQCCF4QABoMNTkwMTgzODAyNjc2IgyjVUj6MZ1d+2CyO38qkQImw+GCst9rzlT0hV4X7UeZIXuQbmBqLuggn4StEEgAo7H0MplV2garKLeNvOUB4RDVehO3LnMf9cwTbwQN18KiD1O86LYqJP4VgC8ZQvwqGYrdtImwHy+tH/sgkQedlz7Oz2XFeRuSMVV+xxGJqGikuCecxfigLA2AFUg80GvXRjfNlfD44DUPHyXSct8LN651EHGrY5sXJUA+R9bxGg9VzYSwKcJMIaM1ILiQIieq/ndcyVnmTzPeDNU2TN7xyO5OOFnCeKt2yUvH1ehAHioz4GHf/SC1XuXr23abZS0/7jCCl1WDkI7EUyPdc3tNjBW+Bwtt4QxbNDgNPibK4ihkhqwNnOw4z42IZYmKE0RVEVsw7t6/uwY6nAH+QkaoWMjk+904wYtqqQRLOyAzU/H7wD1HDf2QBTH7ILig+I6Nj0HRsjl/t1iySY7G/YGHEvWv9hw7juznE+miPY0MnhDWBcje4jH+e7+9Wa964aQTuQi2wEEX/yr599w7U/8ratzIsIIgNSEInHEbW/oJwn3wx1NmEWzWtxzZsWVrzeiJH6+3UA2+M2+GnSI40ACAry7N90tJ7Pk="
 
 boto3.setup_default_session(
     aws_access_key_id=aws_access_key_id,
@@ -291,8 +291,10 @@ def loan_status_funcionarios(request):
 @permission_classes([IsAuthenticated])
 def decision(request):
 
+    id = request.data.get('id')
+
     try:
-        emp = emprestimo.objects.get(id=request.data.get('id'))
+        emp = emprestimo.objects.get(id=id)
 
         if emp:
 
@@ -309,7 +311,7 @@ def decision(request):
                 for hora in horarios:
                     h = horario(
                         horario = hora,
-                        id_emprestimo = request.data.get('id')
+                        id_emprestimo = id
                     )
                     
                     h.save()
@@ -323,10 +325,11 @@ def decision(request):
         return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
+
 # atualiza o horario da entrevista
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def horario(request):
+def escolher_horario(request):
     try:
         emp = emprestimo.objects.get(id=request.data.get('id'))
 

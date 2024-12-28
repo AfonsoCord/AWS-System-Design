@@ -1,5 +1,5 @@
 from django.urls import path
-from api.views import login, loan_simulator, Home, loan_status, BankLogin, loan_status_funcionarios, decision, horario
+from api.views import login, loan_simulator, Home, loan_status, BankLogin, loan_status_funcionarios, decision, escolher_horario
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -12,7 +12,7 @@ urlpatterns = [
     path('BankLogin/', BankLogin, name='BankLogin'),
     path('loan_status_funcionarios/', loan_status_funcionarios, name='loan_status_funcionarios'),
     path('decision/', decision, name='decision'),
-    path('horario/', horario, name='horario'),
+    path('escolher_horario/', escolher_horario, name='escolher_horario'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     ]

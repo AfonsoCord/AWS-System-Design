@@ -79,7 +79,13 @@ function LoanStatus() {
         formData.append("decisao", decision);
         formData.append("id", id);
         formData.append("estado", estado)
-        formData.append("horarios", schedules)
+
+        if (decision !== "requer entrevista") {
+            setSchedules([]);
+            formData.append("horarios", []);
+        } else {
+            formData.append("horarios", schedules);
+        }
 
         try {
             const res = await api.post('/decision/', formData, {
