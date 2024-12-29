@@ -1,0 +1,157 @@
+{
+  "QueryLanguage": "JSONata",
+  "Comment": "A description of my state machine",
+  "StartAt": "Calcular Credit Score",
+  "States": {
+    "Calcular Credit Score": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "arn:aws:lambda:us-east-1:590183802676:function:calculoCreditScore:$LATEST",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Esperar pela decisão"
+    },
+    "Esperar pela decisão": {
+      "Type": "Wait",
+      "Seconds": 60,
+      "Next": "Ver a decisão"
+    },
+    "Ver a decisão": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "arn:aws:lambda:us-east-1:590183802676:function:getDecisao:$LATEST",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Verificar decisão"
+    },
+    "Verificar decisão": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "Enviar notificação final",
+          "Condition": "{% $states.input.decisao = 'aprovado' or $states.input.decisao = 'rejeitado' %}"
+        },
+        {
+          "Next": "Enviar notificação",
+          "Condition": "{% $states.input.decisao = 'requer entrevista' %}"
+        }
+      ],
+      "Default": "Decisão não registada"
+    },
+    "Decisão não registada": {
+      "Type": "Wait",
+      "Seconds": 5,
+      "Next": "Ver a decisão"
+    },
+    "Enviar notificação final": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Arguments": {
+        "TopicArn": "arn:aws:sns:us-east-1:590183802676:teste",
+        "Message": {
+          "email": "Foi registada uma decisão relativa ao seu pedido de empréstimo! Entre no site do banco para consultar a decisão!"
+        }
+      },
+      "End": true
+    },
+    "Enviar notificação": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Arguments": {
+        "TopicArn": "arn:aws:sns:us-east-1:590183802676:teste",
+        "Message": {
+          "email": "Foi registada uma decisão relativa ao seu pedido de empréstimo! Entre no site do banco para consultar a decisão!"
+        }
+      },
+      "Next": "Esperar marcação da entrevista e decisão final",
+      "Output": "{% $states.input %}"
+    },
+    "Esperar marcação da entrevista e decisão final": {
+      "Type": "Wait",
+      "Seconds": 70,
+      "Next": "Consultar decisão final"
+    },
+    "Consultar decisão final": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "arn:aws:lambda:us-east-1:590183802676:function:getDecisao:$LATEST",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Choice"
+    },
+    "Choice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "Enviar notificação final após entrevista",
+          "Condition": "{% $states.input.decisao = 'aprovado' or $states.input.decisao = 'rejeitado' %}"
+        }
+      ],
+      "Default": "Decisão final não registada"
+    },
+    "Enviar notificação final após entrevista": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Arguments": {
+        "TopicArn": "arn:aws:sns:us-east-1:590183802676:teste",
+        "Message": {
+          "email": "Foi registada uma decisão relativa ao seu pedido de empréstimo! Entre no site do banco para consultar a decisão!"
+        }
+      },
+      "End": true
+    },
+    "Decisão final não registada": {
+      "Type": "Wait",
+      "Seconds": 10,
+      "Next": "Consultar decisão final"
+    }
+  }
+}
