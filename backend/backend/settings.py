@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-4jk#)5(jk(ag$hd(oil)o0to+gpnw@p14x37u)rmcmqfg29$e7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["django-env2.eba-k8qtghv3.us-east-1.elasticbeanstalk.com", "*"]
 
 #Para os tokens JWT funcionarem
 REST_FRAMEWORK = {
@@ -175,6 +175,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    '*',
     'http://localhost:5173',
     'http://localhost:5000'
 ]    

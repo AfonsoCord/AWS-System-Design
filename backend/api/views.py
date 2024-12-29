@@ -22,42 +22,13 @@ db_name = 'emprestimos'
 
 state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
 
-aws_access_key_id="ASIAYS2NSE42IORVIK2S"
-aws_secret_access_key="jJOW9bJDxCxkbVGlK+PnNnWsSdmOoawh+Z93XMf8"
-aws_session_token="IQoJb3JpZ2luX2VjEIn//////////wEaCXVzLXdlc3QtMiJHMEUCIQDksWizgUZGHSCQX8mqW/cZGjMTb5v4wEJ/ridsHS8iQwIgLNxqmc5Qbx/CfXyE2U5/nTj3lmaQ/Fb4YFvRZovqVNAqtAIIYhAAGgw1OTAxODM4MDI2NzYiDOeIADxny3t9YU+9XiqRAqX1eB3MWPpMnJOExcI4ADygkRQqN+Y+Gg5o9pqE6nKWU7tSvReyzYwwKldqsjEkL+cHfJcClqPjSPkpQbI9I9TZUkgTMnTcaJspfwv5CGCJifRgabS2pwk0/02OBvIRflogazu3xcWnbd+3RRTnJtGBqjts8z9Efo3Mmh1LQ0H/dV+lfs7+Zhjsse41hVbusAL2UmIG+dDyRrBZaAZqJK1FgVcMu54NAbFlwA5PUqDnnzH6WGSVElr06Nq5n3PHrQZQbnoSL35cQ9oAEsLb/TV2AnAyL3cpuKfE5gjj4CpcMGNQKPINJJg/qOUmoEv2orJwpB/pkM4wv8HucyyFHk1SlgGGaVnk5UBPLVgsiy2sujDF0MC7BjqdAVvMvri2tUXeVXU/jwWVIGLtBDLoxDcoLo4c3QqVpp8Xy7ORZn+IH3cb6jzddhGCGXnFzo50z93xAAOmMcj83dp3nU2BL45HeGh+f6SU51fC0qQTvQnEhkDVdAsUkAJPzIir2m6oxyp6S93fQAzd0YhB3nhLmcrMEZ7BtXma1ouizb7QQHY9+wRTuBH6dTveZvWDzcbqb14VBw2kzAg="
 
-boto3.setup_default_session(
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key,
-    aws_session_token=aws_session_token,
-    region_name='us-east-1'
-)
+boto3.setup_default_session(region_name='us-east-1')
 
-s3 = boto3.resource('s3',
-                    aws_access_key_id = aws_access_key_id,
-                    aws_secret_access_key=aws_secret_access_key,
-                    aws_session_token=aws_session_token
-                    )
-
-client = boto3.client('rekognition',
-                region_name = 'us-east-1',
-                aws_access_key_id = aws_access_key_id,
-                aws_secret_access_key=aws_secret_access_key,
-                aws_session_token=aws_session_token
-                )
-
-dynamodb = boto3.client('dynamodb',
-                region_name = 'us-east-1',
-                aws_access_key_id = aws_access_key_id,
-                aws_secret_access_key=aws_secret_access_key,
-                aws_session_token=aws_session_token
-                )
-
-stepfunction = boto3.client('stepfunctions',
-                    region_name = 'us-east-1',
-                aws_access_key_id = aws_access_key_id,
-                aws_secret_access_key=aws_secret_access_key,
-                aws_session_token=aws_session_token)
+s3 = boto3.resource('s3')
+client = boto3.client('rekognition', region_name = 'us-east-1')
+dynamodb = boto3.client('dynamodb', region_name = 'us-east-1')
+stepfunction = boto3.client('stepfunctions', region_name = 'us-east-1')
 
 my_bucket = s3.Bucket(bucket_name)   
 

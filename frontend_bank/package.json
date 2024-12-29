@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "http://127.0.0.1:8000",
+  "proxy": "http://django-env2.eba-k8qtghv3.us-east-1.elasticbeanstalk.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
