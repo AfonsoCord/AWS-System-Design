@@ -1,10 +1,11 @@
 import json
 import pymysql
+import os
 
-user_name = 'LabRole'
-password = 'projetoes2024'
-rds_proxy_host = 'database.c3oqw4668mx3.us-east-1.rds.amazonaws.com'
-db_name = 'emprestimos'
+user_name = os.environ.get('DB_USER', 'your_db_user')
+password = os.environ.get('DB_PASSWORD', 'your_db_password')
+rds_proxy_host = os.environ.get('DB_HOST', 'your_db_host')
+db_name = os.environ.get('DB_NAME', 'your_db_name')
 
 def lambda_handler(event, context):
 

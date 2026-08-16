@@ -1,5 +1,5 @@
 from rest_framework import status
-from .serializers import LoginSerializer, LoanSerializer, BankLoginSerializer
+from ....LivrosPaiDjango.backend.api.serializers import LoginSerializer, LoanSerializer, BankLoginSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import emprestimo, horario
 from rest_framework.views import APIView
@@ -11,16 +11,17 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import permission_classes
 import pymysql
+import os
 
-bucket_name = 'bankingsystem'
+bucket_name = os.environ.get('S3_BUCKET_NAME', 'your-bucket-name')
 collection_name = 'faces'
 
-user_name = 'LabRole'
-password = 'projetoes2024'
-rds_proxy_host = 'database.c3oqw4668mx3.us-east-1.rds.amazonaws.com'
-db_name = 'emprestimos'
+user_name = os.environ.get('DB_USER', 'your_db_user')
+password = os.environ.get('DB_PASSWORD', 'your_db_password')
+rds_proxy_host = os.environ.get('DB_HOST', 'your_db_host')
+db_name = os.environ.get('DB_NAME', 'your_db_name')
 
-state_machine_arn = 'arn:aws:states:us-east-1:590183802676:stateMachine:MyStateMachine-nslqfmw27'
+state_machine_arn = os.environ.get('STATE_MACHINE_ARN', 'arn:aws:states:us-east-1:YOUR_ACCOUNT_ID:stateMachine:YourStateMachine')
 
 
 boto3.setup_default_session(region_name='us-east-1')
